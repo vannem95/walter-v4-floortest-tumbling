@@ -321,7 +321,7 @@ OSCNode::OSCNode(const std::string& xml_path)
     // data_msg_.data.reserve(1);        
     //===========================================================================
 
-    timer_ = this->create_wall_timer(std::chrono::microseconds(5000), std::bind(&OSCNode::timer_callback, this));
+    // timer_ = this->create_wall_timer(std::chrono::microseconds(5000), std::bind(&OSCNode::timer_callback, this));
 
     rclcpp::on_shutdown([this]() {
         RCLCPP_WARN(this->get_logger(), "Shutdown signal received. Attempting to stop robot...");
@@ -338,34 +338,37 @@ OSCNode::~OSCNode() {
 // ===============================================================================================================
 // Full implementation of all methods
 void OSCNode::state_callback(const OSCMujocoState::SharedPtr msg) {
-    std::lock_guard<std::mutex> lock(state_mutex_);
-    // Manually copy and cast each member to the correct double type
-    for (size_t i = 0; i < model::nu_size; ++i) {
-        state_.motor_position(i) = static_cast<double>(msg->motor_position[i]);
-        state_.motor_velocity(i) = static_cast<double>(msg->motor_velocity[i]);
-        state_.torque_estimate(i) = static_cast<double>(msg->torque_estimate[i]);
+    {
+        std::lock_guard<std::mutex> lock(state_mutex_);
+        // Manually copy and cast each member to the correct double type
+        for (size_t i = 0; i < model::nu_size; ++i) {
+            state_.motor_position(i) = static_cast<double>(msg->motor_position[i]);
+            state_.motor_velocity(i) = static_cast<double>(msg->motor_velocity[i]);
+            state_.torque_estimate(i) = static_cast<double>(msg->torque_estimate[i]);
 
-        // CAPTURE DETECTED POSITION
-        last_detected_motor_position_(i) = state_.motor_position(i);        
+            // CAPTURE DETECTED POSITION
+            last_detected_motor_position_(i) = state_.motor_position(i);        
+            
+        }
+
+        // CAPTURE STATE READ TIME
+        state_read_time_ = std::chrono::high_resolution_clock::now();    
         
-    }
+        for (size_t i = 0; i < 4; ++i) {
+            state_.body_rotation(i) = static_cast<double>(msg->body_rotation[i]);
+        }
 
-    // CAPTURE STATE READ TIME
-    state_read_time_ = std::chrono::high_resolution_clock::now();    
-    
-    for (size_t i = 0; i < 4; ++i) {
-        state_.body_rotation(i) = static_cast<double>(msg->body_rotation[i]);
-    }
+        for (size_t i = 0; i < 3; ++i) {
+            state_.linear_body_velocity(i) = static_cast<double>(msg->linear_body_velocity[i]);
+            state_.angular_body_velocity(i) = static_cast<double>(msg->angular_body_velocity[i]);
+        }
 
-    for (size_t i = 0; i < 3; ++i) {
-        state_.linear_body_velocity(i) = static_cast<double>(msg->linear_body_velocity[i]);
-        state_.angular_body_velocity(i) = static_cast<double>(msg->angular_body_velocity[i]);
+        for (size_t i = 0; i < model::contact_site_ids_size; ++i) {
+            state_.contact_mask(i) = static_cast<double>(msg->contact_mask[i]);
+        }
+        is_state_received_ = true;
     }
-
-    for (size_t i = 0; i < model::contact_site_ids_size; ++i) {
-        state_.contact_mask(i) = static_cast<double>(msg->contact_mask[i]);
-    }
-    is_state_received_ = true;    
+    this->timer_callback();    
 }
 
 
