@@ -506,83 +506,62 @@ void OSCNode::timer_callback() {
 
     if (!local_safety_override_active) {
 
-
         // ===============================================================
-        // --- HARDCODED TIME-BASED CONTACT MASK AND TUMBLE TARGETS ---
+        // 1. POSITION-BASED TRAJECTORY (Synchronized to Elapsed Time)
         // ===============================================================
         double elapsed_t = current_time - gait_start_time;
         
-        // 1. Constant Tumbling Velocity (Matches Sim: 1.5 rad/s)
-        // double shin_rot_vel = 1.5; 
-        // double shin_vel_target = shin_rot_vel;
+        const double TARGET_VELOCITY = 1.5; // rad/s (Terminal speed)
+        const double RAMP_DURATION = 1.5;   // seconds
 
-        // // 2. Open-Loop Position Targets
-        // double shin_pos_tl_target = shin_pos_tl_initial + shin_rot_vel * elapsed_t;
-        // double shin_pos_tr_target = shin_pos_tr_initial + shin_rot_vel * elapsed_t;
-        // double shin_pos_hl_target = shin_pos_hl_initial + shin_rot_vel * elapsed_t;
-        // double shin_pos_hr_target = shin_pos_hr_initial + shin_rot_vel * elapsed_t;
-
-
-        // ===============================================================
-        // 1. SMOOTH TUMBLING VELOCITY RAMP (1.5 sec start)
-        // ===============================================================
-        const double RAMP_DURATION = 1.5; // seconds to reach full speed
-        const double TARGET_VELOCITY = 1.5; // rad/s
-        
         double shin_rot_vel = 0.0;
         double pos_offset = 0.0;
 
         if (elapsed_t < RAMP_DURATION) {
-            // Ramp up linearly
+            // Velocity ramps up
             shin_rot_vel = TARGET_VELOCITY * (elapsed_t / RAMP_DURATION);
-            // Integral of velocity ramp to keep position target perfectly synced
+            
+            // Position is the integral of the velocity ramp
             pos_offset = 0.5 * (TARGET_VELOCITY / RAMP_DURATION) * elapsed_t * elapsed_t;
         } else {
-            // Constant speed
+            // Constant velocity
             shin_rot_vel = TARGET_VELOCITY;
+            
+            // Position = Distance covered during ramp + distance covered at constant speed
             double distance_during_ramp = 0.5 * TARGET_VELOCITY * RAMP_DURATION;
             pos_offset = distance_during_ramp + TARGET_VELOCITY * (elapsed_t - RAMP_DURATION);
         }
 
-        double shin_vel_target = shin_rot_vel;
-
-        // 2. Open-Loop Position Targets (using integrated ramp)
-        double shin_pos_tl_target = shin_pos_tl_initial + pos_offset;
-        double shin_pos_tr_target = shin_pos_tr_initial + pos_offset;
-        double shin_pos_hl_target = shin_pos_hl_initial + pos_offset;
-        double shin_pos_hr_target = shin_pos_hr_initial + pos_offset;
-        
-
-
-        // 3. Timing Parameters (Calibrated from Simulation)
+        // ===============================================================
+        // 2. CONTACT SCHEDULING (Tied securely to REAL elapsed time)
+        // ===============================================================
+        // These timings MUST be linked to elapsed_t, not the position offset
         const double x_front_period = 1.42; 
         const double y_back_period  = 1.42;
-        const double z_front_start  = 1.30;
-        const double w_back_start   = 0.638;
+        
+        // We must delay the first flip so it happens AFTER the ramp finishes
+        // and the robot is at full tumbling speed.
+        const double z_front_start  = 1.30 + RAMP_DURATION; 
+        const double w_back_start   = 0.638 + RAMP_DURATION;
         
         const bool initial_front_F = true;
         const bool initial_back_F  = true;
 
-        // ===============================================================
-        // *** THE FIX: PHASE-LOCKED CONTACT SCHEDULING ***
-        // Reverse-calculate "virtual time" based on actual rotation distance
-        // This guarantees the contacts NEVER switch until the legs are in position
-        // ===============================================================
-        double gait_phase_time = pos_offset / TARGET_VELOCITY;
-
-        // 4. Calculate Front/Head Flips (Using gait_phase_time!)
+        // Front/Head Flips
         bool front_F = initial_front_F;
-        if (gait_phase_time >= z_front_start) {
-            int flips = static_cast<int>((gait_phase_time - z_front_start) / x_front_period) + 1;
+        if (elapsed_t >= z_front_start) {
+            int flips = static_cast<int>((elapsed_t - z_front_start) / x_front_period) + 1;
             if (flips % 2 != 0) front_F = !initial_front_F;
         }
 
-        // 5. Calculate Back/Torso Flips (Using gait_phase_time!)
+        // Back/Torso Flips
         bool back_F = initial_back_F;
-        if (gait_phase_time >= w_back_start) {
-            int flips = static_cast<int>((gait_phase_time - w_back_start) / y_back_period) + 1;
+        if (elapsed_t >= w_back_start) {
+            int flips = static_cast<int>((elapsed_t - w_back_start) / y_back_period) + 1;
             if (flips % 2 != 0) back_F = !initial_back_F;
         }
+        
+        // ... (Keep your existing Contact Mask assignment logic here) ...
 
         // 6. Apply to Contact Mask
         // Back/Torso: indices 0 (F), 1 (R), 2 (F), 3 (R)
