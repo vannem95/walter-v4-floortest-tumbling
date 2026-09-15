@@ -513,14 +513,46 @@ void OSCNode::timer_callback() {
         double elapsed_t = current_time - gait_start_time;
         
         // 1. Constant Tumbling Velocity (Matches Sim: 1.5 rad/s)
-        double shin_rot_vel = 1.5; 
+        // double shin_rot_vel = 1.5; 
+        // double shin_vel_target = shin_rot_vel;
+
+        // // 2. Open-Loop Position Targets
+        // double shin_pos_tl_target = shin_pos_tl_initial + shin_rot_vel * elapsed_t;
+        // double shin_pos_tr_target = shin_pos_tr_initial + shin_rot_vel * elapsed_t;
+        // double shin_pos_hl_target = shin_pos_hl_initial + shin_rot_vel * elapsed_t;
+        // double shin_pos_hr_target = shin_pos_hr_initial + shin_rot_vel * elapsed_t;
+
+
+        // ===============================================================
+        // 1. SMOOTH TUMBLING VELOCITY RAMP (1.5 sec start)
+        // ===============================================================
+        const double RAMP_DURATION = 1.5; // seconds to reach full speed
+        const double TARGET_VELOCITY = 1.5; // rad/s
+        
+        double shin_rot_vel = 0.0;
+        double pos_offset = 0.0;
+
+        if (elapsed_t < RAMP_DURATION) {
+            // Ramp up linearly
+            shin_rot_vel = TARGET_VELOCITY * (elapsed_t / RAMP_DURATION);
+            // Integral of velocity ramp to keep position target perfectly synced
+            pos_offset = 0.5 * (TARGET_VELOCITY / RAMP_DURATION) * elapsed_t * elapsed_t;
+        } else {
+            // Constant speed
+            shin_rot_vel = TARGET_VELOCITY;
+            double distance_during_ramp = 0.5 * TARGET_VELOCITY * RAMP_DURATION;
+            pos_offset = distance_during_ramp + TARGET_VELOCITY * (elapsed_t - RAMP_DURATION);
+        }
+
         double shin_vel_target = shin_rot_vel;
 
-        // 2. Open-Loop Position Targets
-        double shin_pos_tl_target = shin_pos_tl_initial + shin_rot_vel * elapsed_t;
-        double shin_pos_tr_target = shin_pos_tr_initial + shin_rot_vel * elapsed_t;
-        double shin_pos_hl_target = shin_pos_hl_initial + shin_rot_vel * elapsed_t;
-        double shin_pos_hr_target = shin_pos_hr_initial + shin_rot_vel * elapsed_t;
+        // 2. Open-Loop Position Targets (using integrated ramp)
+        double shin_pos_tl_target = shin_pos_tl_initial + pos_offset;
+        double shin_pos_tr_target = shin_pos_tr_initial + pos_offset;
+        double shin_pos_hl_target = shin_pos_hl_initial + pos_offset;
+        double shin_pos_hr_target = shin_pos_hr_initial + pos_offset;
+        
+
 
         // 3. Timing Parameters (Calibrated from Simulation)
         const double x_front_period = 1.42; 
@@ -531,17 +563,24 @@ void OSCNode::timer_callback() {
         const bool initial_front_F = true;
         const bool initial_back_F  = true;
 
-        // 4. Calculate Front/Head Flips
+        // ===============================================================
+        // *** THE FIX: PHASE-LOCKED CONTACT SCHEDULING ***
+        // Reverse-calculate "virtual time" based on actual rotation distance
+        // This guarantees the contacts NEVER switch until the legs are in position
+        // ===============================================================
+        double gait_phase_time = pos_offset / TARGET_VELOCITY;
+
+        // 4. Calculate Front/Head Flips (Using gait_phase_time!)
         bool front_F = initial_front_F;
-        if (elapsed_t >= z_front_start) {
-            int flips = static_cast<int>((elapsed_t - z_front_start) / x_front_period) + 1;
+        if (gait_phase_time >= z_front_start) {
+            int flips = static_cast<int>((gait_phase_time - z_front_start) / x_front_period) + 1;
             if (flips % 2 != 0) front_F = !initial_front_F;
         }
 
-        // 5. Calculate Back/Torso Flips
+        // 5. Calculate Back/Torso Flips (Using gait_phase_time!)
         bool back_F = initial_back_F;
-        if (elapsed_t >= w_back_start) {
-            int flips = static_cast<int>((elapsed_t - w_back_start) / y_back_period) + 1;
+        if (gait_phase_time >= w_back_start) {
+            int flips = static_cast<int>((gait_phase_time - w_back_start) / y_back_period) + 1;
             if (flips % 2 != 0) back_F = !initial_back_F;
         }
 
@@ -588,7 +627,9 @@ void OSCNode::timer_callback() {
         // ===============================================================
         // thigh - (kp - 600.0 — kd - 45.0)
         // double thigh_z_kp = 1300.0; double thigh_z_kv = 72.0;
-        double thigh_z_kp = 1150.0; double thigh_z_kv = 68.0;
+        // double thigh_z_kp = 1150.0; double thigh_z_kv = 68.0;
+        double thigh_z_kp = 3000.0; double thigh_z_kv = 110.0;
+
         // double thigh_z_kp = 2200.0; double thigh_z_kv = 90.0;
 
         // Use instantaneous motor velocities to calculate exact Z velocity
