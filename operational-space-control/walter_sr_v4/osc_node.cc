@@ -313,9 +313,9 @@ OSCNode::OSCNode(const std::string& xml_path)
 
     // Add your metadata note here!
 
-    data_msg_.layout.dim[0].label = "target_hip_z, hip_z_tl, hip_z_tr, hip_z_hl, hip_z_hr, target_hip_z_vel, hip_zv_tl, hip_zv_tr, hip_zv_hl, hip_zv_hr, shin_pos_tl_target, shin_pos_tr_target, shin_pos_hl_target, shin_pos_hr_target, shin_pos_tl, shin_pos_tr, shin_pos_hl, shin_pos_hr, shin_vel_target, shin_vel_tl, shin_vel_tr, shin_vel_hl, shin_vel_hr, body_x, body_y, body_z, contact_tlf, contact_tlr, contact_trf, contact_trr, contact_hlf, contact_hlr, contact_hrf, contact_hrr, osqp_exit, time_casadi, time_osqp, qp_obj, tau_rlh, tau_rlk, tau_rrh, tau_rrk, tau_flh, tau_flk, tau_frh, tau_frk, fz_tlf, fz_tlr, fz_trf, fz_trr, fz_hlf, fz_hlr, fz_hrf, fz_hrr"; 
+    data_msg_.layout.dim[0].label = "target_hip_z, hip_z_tl, hip_z_tr, hip_z_hl, hip_z_hr, target_hip_z_vel, hip_zv_tl, hip_zv_tr, hip_zv_hl, hip_zv_hr, shin_pos_tl_target, shin_pos_tr_target, shin_pos_hl_target, shin_pos_hr_target, shin_pos_tl, shin_pos_tr, shin_pos_hl, shin_pos_hr, shin_vel_target, shin_vel_tl, shin_vel_tr, shin_vel_hl, shin_vel_hr, body_x, body_y, body_z, contact_tlf, contact_tlr, contact_trf, contact_trr, contact_hlf, contact_hlr, contact_hrf, contact_hrr, osqp_exit, time_casadi, time_osqp, qp_obj, tau_rlh, tau_rlk, tau_rrh, tau_rrk, tau_flh, tau_flk, tau_frh, tau_frk, fz_tlf, fz_tlr, fz_trf, fz_trr, fz_hlf, fz_hlr, fz_hrf, fz_hrr, global_vx, global_vy, tl_x_tgt, tl_y_tgt"; 
     
-    data_msg_.data.reserve(54); // Exactly 54 elements now    
+    data_msg_.data.reserve(58); // Exactly 54 elements now    
     // // Reserve memory so push_back is zero-overhead
     // // data_msg_.data.reserve(num_sites * num_dof);        
     // data_msg_.data.reserve(1);        
@@ -755,6 +755,15 @@ void OSCNode::timer_callback() {
             data_msg_.data.push_back(solution_(optimization::z_idx + (3 * i) + 2));
         }
         
+        // ==============================================================================
+        // --- ADD DIAGNOSTICS FOR X/Y VELOCITY PROOF ---
+        // ==============================================================================
+        data_msg_.data.push_back(mj_data_->qvel[0]); // global_vx
+        data_msg_.data.push_back(mj_data_->qvel[1]); // global_vy
+        data_msg_.data.push_back(taskspace_targets_.row(5)(0)); // tl_x_tgt
+        data_msg_.data.push_back(taskspace_targets_.row(5)(1)); // tl_y_tgt
+
+
         // 3. Publish
         data_pub_->publish(data_msg_);
         // ==============================================================================
