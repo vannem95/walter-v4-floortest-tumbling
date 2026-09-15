@@ -680,6 +680,15 @@ void OSCNode::timer_callback() {
         double hl_hip_z_ddq_cmd = thigh_z_kp * (target_hip_z - hip_z_hl) + thigh_z_kv * (target_hip_z_vel - hip_zv_hl);
         double hr_hip_z_ddq_cmd = thigh_z_kp * (target_hip_z - hip_z_hr) + thigh_z_kv * (target_hip_z_vel - hip_zv_hr);
 
+
+        // Approximate linear acceleration = rotational acceleration * radius
+        double tl_x_ff = tl_ddq_cmd * L_SHIN;
+        double tr_x_ff = tr_ddq_cmd * L_SHIN;
+        double hl_x_ff = hl_ddq_cmd * L_SHIN;
+        double hr_x_ff = hr_ddq_cmd * L_SHIN;
+
+        
+
         // Populate Taskspace Targets Matrix 
         taskspace_targets_.setZero(); 
         taskspace_targets_.row(1)(4) = tl_ddq_cmd; taskspace_targets_.row(2)(4) = tr_ddq_cmd;
@@ -687,6 +696,10 @@ void OSCNode::timer_callback() {
         taskspace_targets_.row(5)(2) = tl_hip_z_ddq_cmd; taskspace_targets_.row(6)(2) = tr_hip_z_ddq_cmd;
         taskspace_targets_.row(7)(2) = hl_hip_z_ddq_cmd; taskspace_targets_.row(8)(2) = hr_hip_z_ddq_cmd;
 
+        taskspace_targets_.row(5)(0) = tl_x_ff;
+        taskspace_targets_.row(6)(0) = tr_x_ff;
+        taskspace_targets_.row(7)(0) = hl_x_ff;
+        taskspace_targets_.row(8)(0) = hr_x_ff;
 
 
         data_msg_.data.clear();
