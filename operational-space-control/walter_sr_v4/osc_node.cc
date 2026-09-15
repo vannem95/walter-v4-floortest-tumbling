@@ -534,6 +534,11 @@ void OSCNode::timer_callback() {
 
         double shin_vel_target = shin_rot_vel;
 
+        double shin_pos_tl_target = shin_pos_tl_initial + pos_offset;
+        double shin_pos_tr_target = shin_pos_tr_initial + pos_offset;
+        double shin_pos_hl_target = shin_pos_hl_initial + pos_offset;
+        double shin_pos_hr_target = shin_pos_hr_initial + pos_offset;
+
         // ===============================================================
         // 2. CONTACT SCHEDULING (Tied securely to REAL elapsed time)
         // ===============================================================
