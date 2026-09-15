@@ -532,6 +532,8 @@ void OSCNode::timer_callback() {
             pos_offset = distance_during_ramp + TARGET_VELOCITY * (elapsed_t - RAMP_DURATION);
         }
 
+        double shin_vel_target = shin_rot_vel;
+
         // ===============================================================
         // 2. CONTACT SCHEDULING (Tied securely to REAL elapsed time)
         // ===============================================================
