@@ -511,7 +511,7 @@ void OSCNode::timer_callback() {
         // ===============================================================
         double elapsed_t = current_time - gait_start_time;
         
-        const double TARGET_VELOCITY = 1.5; // rad/s (Terminal speed)
+        const double TARGET_VELOCITY = 0.5; // rad/s (Terminal speed)
         const double RAMP_DURATION = 1.5;   // seconds
 
         double shin_rot_vel = 0.0;
@@ -613,8 +613,8 @@ void OSCNode::timer_callback() {
         // ===============================================================
         // thigh - (kp - 600.0 — kd - 45.0)
         // double thigh_z_kp = 1300.0; double thigh_z_kv = 72.0;
-        // double thigh_z_kp = 1150.0; double thigh_z_kv = 68.0;
-        double thigh_z_kp = 3000.0; double thigh_z_kv = 110.0;
+        double thigh_z_kp = 1150.0; double thigh_z_kv = 68.0;
+        // double thigh_z_kp = 3000.0; double thigh_z_kv = 110.0;
 
         // double thigh_z_kp = 2200.0; double thigh_z_kv = 90.0;
 
@@ -682,10 +682,10 @@ void OSCNode::timer_callback() {
 
 
         // Approximate linear acceleration = rotational acceleration * radius
-        double tl_x_ff = tl_ddq_cmd * L_SHIN;
-        double tr_x_ff = tr_ddq_cmd * L_SHIN;
-        double hl_x_ff = hl_ddq_cmd * L_SHIN;
-        double hr_x_ff = hr_ddq_cmd * L_SHIN;
+        // double tl_x_ff = tl_ddq_cmd * L_SHIN;
+        // double tr_x_ff = tr_ddq_cmd * L_SHIN;
+        // double hl_x_ff = hl_ddq_cmd * L_SHIN;
+        // double hr_x_ff = hr_ddq_cmd * L_SHIN;
 
         
 
@@ -696,10 +696,10 @@ void OSCNode::timer_callback() {
         taskspace_targets_.row(5)(2) = tl_hip_z_ddq_cmd; taskspace_targets_.row(6)(2) = tr_hip_z_ddq_cmd;
         taskspace_targets_.row(7)(2) = hl_hip_z_ddq_cmd; taskspace_targets_.row(8)(2) = hr_hip_z_ddq_cmd;
 
-        taskspace_targets_.row(5)(0) = tl_x_ff;
-        taskspace_targets_.row(6)(0) = tr_x_ff;
-        taskspace_targets_.row(7)(0) = hl_x_ff;
-        taskspace_targets_.row(8)(0) = hr_x_ff;
+        // taskspace_targets_.row(5)(0) = tl_x_ff;
+        // taskspace_targets_.row(6)(0) = tr_x_ff;
+        // taskspace_targets_.row(7)(0) = hl_x_ff;
+        // taskspace_targets_.row(8)(0) = hr_x_ff;
 
 
         data_msg_.data.clear();
