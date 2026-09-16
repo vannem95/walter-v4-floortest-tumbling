@@ -53,13 +53,13 @@ weights_config:
   hrs_translational_tracking: 0.0
   hrs_rotational_tracking: 100.0
   
-  tlh_translational_tracking: 200.0
+  tlh_translational_tracking: 300.0
   tlh_rotational_tracking: 0.0
-  trh_translational_tracking: 200.0
+  trh_translational_tracking: 300.0
   trh_rotational_tracking: 0.0
-  hlh_translational_tracking: 200.0
+  hlh_translational_tracking: 300.0
   hlh_rotational_tracking: 0.0
-  hrh_translational_tracking: 200.0
+  hrh_translational_tracking: 300.0
   hrh_rotational_tracking: 0.0
 
 
