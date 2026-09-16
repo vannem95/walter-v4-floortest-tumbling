@@ -612,27 +612,27 @@ void OSCNode::timer_callback() {
         // ===============================================================
         // --- THE PENETRATION PROOF: All 8 Wheel Z-Heights ---
         // ===============================================================
-        static int id_tlf = mj_name2id(mj_model_, mjOBJ_SITE, "tlf_wheel_site");
-        static int id_tlr = mj_name2id(mj_model_, mjOBJ_SITE, "tlr_wheel_site");
-        static int id_trf = mj_name2id(mj_model_, mjOBJ_SITE, "trf_wheel_site");
-        static int id_trr = mj_name2id(mj_model_, mjOBJ_SITE, "trr_wheel_site");
-        static int id_hlf = mj_name2id(mj_model_, mjOBJ_SITE, "hlf_wheel_site");
-        static int id_hlr = mj_name2id(mj_model_, mjOBJ_SITE, "hlr_wheel_site");
-        static int id_hrf = mj_name2id(mj_model_, mjOBJ_SITE, "hrf_wheel_site");
-        static int id_hrr = mj_name2id(mj_model_, mjOBJ_SITE, "hrr_wheel_site");
+        // static int id_tlf = mj_name2id(mj_model_, mjOBJ_SITE, "tlf_wheel_site");
+        // static int id_tlr = mj_name2id(mj_model_, mjOBJ_SITE, "tlr_wheel_site");
+        // static int id_trf = mj_name2id(mj_model_, mjOBJ_SITE, "trf_wheel_site");
+        // static int id_trr = mj_name2id(mj_model_, mjOBJ_SITE, "trr_wheel_site");
+        // static int id_hlf = mj_name2id(mj_model_, mjOBJ_SITE, "hlf_wheel_site");
+        // static int id_hlr = mj_name2id(mj_model_, mjOBJ_SITE, "hlr_wheel_site");
+        // static int id_hrf = mj_name2id(mj_model_, mjOBJ_SITE, "hrf_wheel_site");
+        // static int id_hrr = mj_name2id(mj_model_, mjOBJ_SITE, "hrr_wheel_site");
 
-        double z_tlf = mj_data_->site_xpos[3 * id_tlf + 2];
-        double z_tlr = mj_data_->site_xpos[3 * id_tlr + 2];
-        double z_trf = mj_data_->site_xpos[3 * id_trf + 2];
-        double z_trr = mj_data_->site_xpos[3 * id_trr + 2];
-        double z_hlf = mj_data_->site_xpos[3 * id_hlf + 2];
-        double z_hlr = mj_data_->site_xpos[3 * id_hlr + 2];
-        double z_hrf = mj_data_->site_xpos[3 * id_hrf + 2];
-        double z_hrr = mj_data_->site_xpos[3 * id_hrr + 2];
+        // double z_tlf = mj_data_->site_xpos[3 * id_tlf + 2];
+        // double z_tlr = mj_data_->site_xpos[3 * id_tlr + 2];
+        // double z_trf = mj_data_->site_xpos[3 * id_trf + 2];
+        // double z_trr = mj_data_->site_xpos[3 * id_trr + 2];
+        // double z_hlf = mj_data_->site_xpos[3 * id_hlf + 2];
+        // double z_hlr = mj_data_->site_xpos[3 * id_hlr + 2];
+        // double z_hrf = mj_data_->site_xpos[3 * id_hrf + 2];
+        // double z_hrr = mj_data_->site_xpos[3 * id_hrr + 2];
 
-        RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 10, 
-            "Z-Heights | TL[F: % .4f R: % .4f] TR[F: % .4f R: % .4f] HL[F: % .4f R: % .4f] HR[F: % .4f R: % .4f]", 
-            z_tlf, z_tlr, z_trf, z_trr, z_hlf, z_hlr, z_hrf, z_hrr);
+        // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 10, 
+        //     "Z-Heights | TL[F: % .4f R: % .4f] TR[F: % .4f R: % .4f] HL[F: % .4f R: % .4f] HR[F: % .4f R: % .4f]", 
+        //     z_tlf, z_tlr, z_trf, z_trr, z_hlf, z_hlr, z_hrf, z_hrr);
         // ===============================================================     
         
         // ===============================================================
@@ -640,7 +640,8 @@ void OSCNode::timer_callback() {
         // ===============================================================
         // thigh - (kp - 600.0 — kd - 45.0)
         // double thigh_z_kp = 1300.0; double thigh_z_kv = 72.0;
-        double thigh_z_kp = 1150.0; double thigh_z_kv = 68.0;
+        // double thigh_z_kp = 1150.0; double thigh_z_kv = 68.0;
+        double thigh_z_kp = 400.0; double thigh_z_kv = 40.0;
         // double thigh_z_kp = 3000.0; double thigh_z_kv = 110.0;
 
         // double thigh_z_kp = 2200.0; double thigh_z_kv = 90.0;
