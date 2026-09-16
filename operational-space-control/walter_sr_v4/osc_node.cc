@@ -630,7 +630,7 @@ void OSCNode::timer_callback() {
         double z_hrf = mj_data_->site_xpos[3 * id_hrf + 2];
         double z_hrr = mj_data_->site_xpos[3 * id_hrr + 2];
 
-        RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 100, 
+        RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 10, 
             "Z-Heights | TL[F: % .4f R: % .4f] TR[F: % .4f R: % .4f] HL[F: % .4f R: % .4f] HR[F: % .4f R: % .4f]", 
             z_tlf, z_tlr, z_trf, z_trr, z_hlf, z_hlr, z_hrf, z_hrr);
         // ===============================================================     
