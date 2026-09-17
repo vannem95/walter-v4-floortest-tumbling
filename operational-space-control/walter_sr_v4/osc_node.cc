@@ -749,12 +749,50 @@ void OSCNode::timer_callback() {
         // double hl_x_ff = hl_ddq_cmd * L_SHIN;
         // double hr_x_ff = hr_ddq_cmd * L_SHIN;
 
+
+
+
+        // ===============================================================
+        // 3. TORSO ROLL & PITCH STABILIZATION (Active Imbalance Correction)
+        // ===============================================================
+        
+        // Extract quaternion (w, x, y, z)
+        double w = local_state.body_rotation(0);
+        double x = local_state.body_rotation(1);
+        double y = local_state.body_rotation(2);
+        double z = local_state.body_rotation(3);
+
+        // Calculate Roll (Rotation about X-axis)
+        double sinr_cosp = 2.0 * (w * x + y * z);
+        double cosr_cosp = 1.0 - 2.0 * (x * x + y * y);
+        double torso_roll = std::atan2(sinr_cosp, cosr_cosp);
+        double torso_roll_vel = local_state.angular_body_velocity(0); 
+
+        // Calculate Pitch (Rotation about Y-axis)
+        // double sinp = 2.0 * (w * y - z * x);
+        // double torso_pitch = std::asin(std::clamp(sinp, -1.0, 1.0));
+        // double torso_pitch_vel = local_state.angular_body_velocity(1); 
+
+        // Tuned PD Gains for 31kg chassis
+        double roll_kp = 100.0;
+        double roll_kv = 20.0; 
+        
+        // double pitch_kp = 600.0; 
+        // double pitch_kv = 50.0; 
+
+        // Target is perfectly level (0.0 rad) and perfectly still (0.0 rad/s)
+        double torso_roll_ddq_cmd = roll_kp * (0.0 - torso_roll) + roll_kv * (0.0 - torso_roll_vel);
+        // double torso_pitch_ddq_cmd = pitch_kp * (0.0 - torso_pitch) + pitch_kv * (0.0 - torso_pitch_vel);        
+
+
         
 
         // Populate Taskspace Targets Matrix 
         taskspace_targets_.setZero(); 
+
         taskspace_targets_.row(1)(4) = tl_ddq_cmd; taskspace_targets_.row(2)(4) = tr_ddq_cmd;
         taskspace_targets_.row(3)(4) = hl_ddq_cmd; taskspace_targets_.row(4)(4) = hr_ddq_cmd;
+        
         taskspace_targets_.row(5)(2) = tl_hip_z_ddq_cmd; taskspace_targets_.row(6)(2) = tr_hip_z_ddq_cmd;
         taskspace_targets_.row(7)(2) = hl_hip_z_ddq_cmd; taskspace_targets_.row(8)(2) = hr_hip_z_ddq_cmd;
 
@@ -762,7 +800,10 @@ void OSCNode::timer_callback() {
         // taskspace_targets_.row(6)(0) = tr_x_ff;
         // taskspace_targets_.row(7)(0) = hl_x_ff;
         // taskspace_targets_.row(8)(0) = hr_x_ff;
-
+        
+        // row(0) is the Torso tracking task: [x, y, z, roll, pitch, yaw]
+        // Indices: 3 = Roll (Rx), 4 = Pitch (Ry)
+        taskspace_targets_.row(0)(3) = torso_roll_ddq_cmd;
 
         data_msg_.data.clear();
 

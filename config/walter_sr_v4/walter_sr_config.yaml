@@ -42,7 +42,7 @@ friction_coefficient: 0.8
 
 weights_config:
   torso_translational_tracking: 0.0
-  torso_rotational_tracking: 0.0
+  torso_rotational_tracking: 100.0
 
   tls_translational_tracking: 0.0
   tls_rotational_tracking: 100.0
