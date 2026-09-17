@@ -313,9 +313,9 @@ OSCNode::OSCNode(const std::string& xml_path)
 
     // Add your metadata note here!
 
-    data_msg_.layout.dim[0].label = "target_hip_z, hip_z_tl, hip_z_tr, hip_z_hl, hip_z_hr, target_hip_z_vel, hip_zv_tl, hip_zv_tr, hip_zv_hl, hip_zv_hr, shin_pos_tl_target, shin_pos_tr_target, shin_pos_hl_target, shin_pos_hr_target, shin_pos_tl, shin_pos_tr, shin_pos_hl, shin_pos_hr, shin_vel_target, shin_vel_tl, shin_vel_tr, shin_vel_hl, shin_vel_hr, body_x, body_y, body_z, contact_tlf, contact_tlr, contact_trf, contact_trr, contact_hlf, contact_hlr, contact_hrf, contact_hrr, osqp_exit, time_casadi, time_osqp, qp_obj, tau_rlh, tau_rlk, tau_rrh, tau_rrk, tau_flh, tau_flk, tau_frh, tau_frk, fz_tlf, fz_tlr, fz_trf, fz_trr, fz_hlf, fz_hlr, fz_hrf, fz_hrr, global_vx, global_vy, tl_x_tgt, tl_y_tgt"; 
+    data_msg_.layout.dim[0].label = "target_hip_z, hip_z_tl, hip_z_tr, hip_z_hl, hip_z_hr, target_hip_z_vel, hip_zv_tl, hip_zv_tr, hip_zv_hl, hip_zv_hr, shin_pos_tl_target, shin_pos_tr_target, shin_pos_hl_target, shin_pos_hr_target, shin_pos_tl, shin_pos_tr, shin_pos_hl, shin_pos_hr, shin_vel_target, shin_vel_tl, shin_vel_tr, shin_vel_hl, shin_vel_hr, body_x, body_y, body_z, contact_tlf, contact_tlr, contact_trf, contact_trr, contact_hlf, contact_hlr, contact_hrf, contact_hrr, osqp_exit, time_casadi, time_osqp, qp_obj, tau_rlh, tau_rlk, tau_rrh, tau_rrk, tau_flh, tau_flk, tau_frh, tau_frk, fz_tlf, fz_tlr, fz_trf, fz_trr, fz_hlf, fz_hlr, fz_hrf, fz_hrr, global_vx, global_vy, tl_x_tgt, tl_y_tgt,tl_x_tgt, tl_y_tgt, pd_acc_tl, qp_acc_tl, sens_acc_tl, pd_acc_tr, qp_acc_tr, sens_acc_tr, pd_acc_hl, qp_acc_hl, sens_acc_hl, pd_acc_hr, qp_acc_hr, sens_acc_hr"; 
     
-    data_msg_.data.reserve(58); // Exactly 54 elements now    
+    data_msg_.data.reserve(70); // Exactly 54 elements now    
     // // Reserve memory so push_back is zero-overhead
     // // data_msg_.data.reserve(num_sites * num_dof);        
     // data_msg_.data.reserve(1);        
@@ -703,6 +703,27 @@ void OSCNode::timer_callback() {
         double shin_vel_hl  =  local_state.motor_velocity(5);
         double shin_vel_hr  =  local_state.motor_velocity(7);
 
+
+        // ===============================================================
+        // --- NEW: MEASURED REAL-WORLD ACCELERATION ---
+        // ===============================================================
+        static double last_shin_vel_tl = 0.0;
+        static double last_shin_vel_tr = 0.0;
+        static double last_shin_vel_hl = 0.0;
+        static double last_shin_vel_hr = 0.0;
+
+        double sensed_acc_tl = (shin_vel_tl - last_shin_vel_tl) / dt;
+        double sensed_acc_tr = (shin_vel_tr - last_shin_vel_tr) / dt;
+        double sensed_acc_hl = (shin_vel_hl - last_shin_vel_hl) / dt;
+        double sensed_acc_hr = (shin_vel_hr - last_shin_vel_hr) / dt;
+
+        last_shin_vel_tl = shin_vel_tl;
+        last_shin_vel_tr = shin_vel_tr;
+        last_shin_vel_hl = shin_vel_hl;
+        last_shin_vel_hr = shin_vel_hr;
+        // ===============================================================        
+
+
         double shin_kp = 100.0; 
         double shin_kv = 5.0;
         // ===============================================================        
@@ -816,6 +837,32 @@ void OSCNode::timer_callback() {
         data_msg_.data.push_back(mj_data_->qvel[1]); // global_vy
         data_msg_.data.push_back(taskspace_targets_.row(5)(0)); // tl_x_tgt
         data_msg_.data.push_back(taskspace_targets_.row(5)(1)); // tl_y_tgt
+
+ 
+        // ==============================================================================
+        // --- THE ACCELERATION TRIAD (PD Target vs QP Solved vs Measured) ---
+        // ==============================================================================
+        // TL (Torso Left / Rear Left Knee -> Motor Index 1 -> OSQP Index 7)
+        data_msg_.data.push_back(tl_ddq_cmd);      // What you asked for
+        data_msg_.data.push_back(solution_(7));    // What CasADi actually planned
+        data_msg_.data.push_back(sensed_acc_tl);   // What the physical motor did
+
+        // TR (Torso Right / Rear Right Knee -> Motor Index 3 -> OSQP Index 9)
+        data_msg_.data.push_back(tr_ddq_cmd);
+        data_msg_.data.push_back(solution_(9));
+        data_msg_.data.push_back(sensed_acc_tr);
+
+        // HL (Head Left / Front Left Knee -> Motor Index 5 -> OSQP Index 11)
+        data_msg_.data.push_back(hl_ddq_cmd);
+        data_msg_.data.push_back(solution_(11));
+        data_msg_.data.push_back(sensed_acc_hl);
+
+        // HR (Head Right / Front Right Knee -> Motor Index 7 -> OSQP Index 13)
+        data_msg_.data.push_back(hr_ddq_cmd);
+        data_msg_.data.push_back(solution_(13));
+        data_msg_.data.push_back(sensed_acc_hr);
+        // ==============================================================================        
+
 
 
         // 3. Publish
