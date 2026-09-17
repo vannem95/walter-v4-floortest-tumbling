@@ -476,6 +476,8 @@ void OSCNode::timer_callback() {
     if (!local_safety_override_active) {
         const double THIGH_LIMIT = 1.95;
         const double MIN_HIP_HEIGHT = 0.11; // 0.13 meters
+        const double MAX_MOTOR_VELOCITY = 15.0; // <-- NEW: Max safe velocity (rad/s)        
+        
         // 1. Check Hip Heights
         if (hip_z_tl < MIN_HIP_HEIGHT || hip_z_tr < MIN_HIP_HEIGHT || 
             hip_z_hl < MIN_HIP_HEIGHT || hip_z_hr < MIN_HIP_HEIGHT) {
@@ -490,6 +492,17 @@ void OSCNode::timer_callback() {
                 if (std::abs(local_state.motor_position(i)) >= THIGH_LIMIT) {
                     limit_hit = true;
                     RCLCPP_WARN_ONCE(this->get_logger(), "Absolute THIGH limit (%.2f rad) hit on motor index %zu. Overriding control.", THIGH_LIMIT, i);
+                    break; 
+                }
+            }
+        }
+
+        // 3. Check Motor Velocities (All 8 motors)
+        if (!limit_hit) {
+            for (size_t i = 0; i < model::nu_size; ++i) {
+                if (std::abs(local_state.motor_velocity(i)) >= MAX_MOTOR_VELOCITY) {
+                    limit_hit = true;
+                    RCLCPP_WARN_ONCE(this->get_logger(), "Absolute VELOCITY limit (>= %.2f rad/s) hit on motor index %zu. Overriding control.", MAX_MOTOR_VELOCITY, i);
                     break; 
                 }
             }
@@ -511,7 +524,7 @@ void OSCNode::timer_callback() {
         // ===============================================================
         double elapsed_t = current_time - gait_start_time;
         
-        const double TARGET_VELOCITY = 0.5; // rad/s (Terminal speed)
+        const double TARGET_VELOCITY = 1.5; // rad/s (Terminal speed)
         const double RAMP_DURATION = 1.5;   // seconds
 
         double shin_rot_vel = 0.0;
