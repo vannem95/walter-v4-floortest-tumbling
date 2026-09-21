@@ -724,7 +724,7 @@ void OSCNode::timer_callback() {
         // ===============================================================        
 
 
-        double shin_kp = 30.0; 
+        double shin_kp = 100.0; 
         double shin_kv = 10.0;
         // ===============================================================        
 
@@ -1387,7 +1387,7 @@ void OSCNode::publish_torque_command(bool safety_override_active_local,
             time_osqp_solve_ms_,
             time_mujoco_update_ms_ + time_casadi_update_ms_ + time_osqp_solve_ms_);
     } else {
-        RCLCPP_WARN(this->get_logger(), "Safety Override Active. Latency: %.3f ms", latency_ms);
+        // RCLCPP_WARN(this->get_logger(), "Safety Override Active. Latency: %.3f ms", latency_ms);
     }
 }
 
