@@ -1307,6 +1307,10 @@ void OSCNode::publish_torque_command(bool safety_override_active_local,
     command_msg->master_gain = 1.0; 
     command_msg->motor_commands.resize(model::nu_size);
 
+    command_msg->wheel_commands.control_mode = 2;
+    command_msg->wheel_commands.velocity_setpoint = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    command_msg->wheel_commands.kp = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
     // --- 2. Determine Overall Mode and Populate Commands ---
     if (safety_override_active_local) {
         // SCENARIO A: PERMANENT SAFETY OVERRIDE
