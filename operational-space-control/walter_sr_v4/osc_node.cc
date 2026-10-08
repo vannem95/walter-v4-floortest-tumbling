@@ -524,7 +524,7 @@ void OSCNode::timer_callback() {
         // ===============================================================
         double elapsed_t = current_time - gait_start_time;
         
-        const double TARGET_VELOCITY = 1.5; // rad/s (Terminal speed)
+        const double TARGET_VELOCITY = 0.5; // rad/s (Terminal speed)
         const double RAMP_DURATION = 1.5;   // seconds
 
         double shin_rot_vel = 0.0;
