@@ -522,20 +522,30 @@ void OSCNode::timer_callback() {
         // ===============================================================
         // 0. THE SETTLING PHASE (Wait for CasADi to balance the 25kg mass)
         // ===============================================================
-        static double node_start_time = current_time; 
         
+        static double node_start_time = current_time; 
         double time_since_start = current_time - node_start_time;
         
-        // Let the robot balance itself for 1.0 seconds BEFORE starting the ramp
+        static bool settled = false;
+
         if (time_since_start < 1.0) {
-            // Continuously update the initial positions to wherever the legs
-            // physically settle to keep the Torso Roll at 0.0
+            // DO NOT update the targets here! Let the robot stand up normally 
+            // using its hardcoded initial values so the knees have stiffness.
+            
+            // Hold the tumbling timer at zero so the ramp doesn't start
+            gait_start_time = current_time; 
+        } 
+        else if (!settled) {
+            // EXACTLY at 1.0 seconds, take a ONE-TIME snapshot of wherever 
+            // the legs settled to balance the heavy Torso.
             shin_pos_tl_initial = local_state.motor_position(1);
             shin_pos_tr_initial = local_state.motor_position(3);
             shin_pos_hl_initial = local_state.motor_position(5);
             shin_pos_hr_initial = local_state.motor_position(7);
-            // Hold the timer at zero
-            gait_start_time = current_time; 
+            
+            settled = true; // Lock the snapshot forever
+            
+            RCLCPP_WARN(this->get_logger(), "Settling complete. Tumbling started from balanced posture!");
         }
 
         // ===============================================================
