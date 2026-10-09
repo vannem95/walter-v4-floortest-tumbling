@@ -520,6 +520,24 @@ void OSCNode::timer_callback() {
     if (!local_safety_override_active) {
 
         // ===============================================================
+        // 0. THE SETTLING PHASE (Wait for CasADi to balance the 25kg mass)
+        // ===============================================================
+        double time_since_start = current_time - node_start_time;
+        
+        // Let the robot balance itself for 1.0 seconds BEFORE starting the ramp
+        if (time_since_start < 1.0) {
+            // Continuously update the initial positions to wherever the legs
+            // physically settle to keep the Torso Roll at 0.0
+            shin_pos_tl_initial = local_state.motor_position(0) + local_state.motor_position(1);
+            shin_pos_tr_initial = local_state.motor_position(2) + local_state.motor_position(3);
+            shin_pos_hl_initial = local_state.motor_position(4) + local_state.motor_position(5);
+            shin_pos_hr_initial = local_state.motor_position(6) + local_state.motor_position(7);
+            
+            // Hold the timer at zero
+            gait_start_time = current_time; 
+        }
+
+        // ===============================================================
         // 1. POSITION-BASED TRAJECTORY (Synchronized to Elapsed Time)
         // ===============================================================
         double elapsed_t = current_time - gait_start_time;
