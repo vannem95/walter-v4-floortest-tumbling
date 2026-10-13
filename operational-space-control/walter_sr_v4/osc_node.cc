@@ -569,19 +569,40 @@ void OSCNode::timer_callback() {
 
         // Front/Head Flips
         bool front_F = initial_front_F;
-        if (elapsed_t >= z_front_start) {
-            int flips = static_cast<int>((elapsed_t - z_front_start) / x_front_period) + 1;
-            if (flips % 2 != 0) front_F = !initial_front_F;
-        }
+        // if (elapsed_t >= z_front_start) {
+        //     int flips = static_cast<int>((elapsed_t - z_front_start) / x_front_period) + 1;
+        //     if (flips % 2 != 0) front_F = !initial_front_F;
+        // }
 
         // Back/Torso Flips
         bool back_F = initial_back_F;
-        if (elapsed_t >= w_back_start) {
-            int flips = static_cast<int>((elapsed_t - w_back_start) / y_back_period) + 1;
-            if (flips % 2 != 0) back_F = !initial_back_F;
-        }
+        // if (elapsed_t >= w_back_start) {
+        //     int flips = static_cast<int>((elapsed_t - w_back_start) / y_back_period) + 1;
+        //     if (flips % 2 != 0) back_F = !initial_back_F;
+        // }
         
-        // ... (Keep your existing Contact Mask assignment logic here) ...
+
+        // ===============================================================
+        // KINEMATIC PROBE EXPERIMENT
+        // ===============================================================
+        // 1. Calculate true global angle (Hip + Knee)
+        double global_shin_tl = local_state.motor_position(0) + local_state.motor_position(1);
+        
+        // Normalize between -PI and PI for easy reading
+        global_shin_tl = std::fmod(global_shin_tl + M_PI, 2 * M_PI);
+        if (global_shin_tl < 0) global_shin_tl += 2 * M_PI;
+        global_shin_tl -= M_PI;
+
+        // 2. Get the CasADi Normal Force for the Torso Left Front Wheel
+        // (Assuming index 0 is TLF in your z_idx matrix)
+        double fz_tl = solution_(optimization::z_idx + 2); // OSQP Z-force prediction
+
+        // 3. Print the data at 10 Hz
+        RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 100, 
+            "TL Global Angle: % .2f rad (% .1f deg) | Target: %.2f | OSQP Fz: % .1f N", 
+            global_shin_tl, global_shin_tl * (180.0 / M_PI), shin_pos_tl_target, fz_tl);
+
+
 
         // 6. Apply to Contact Mask
         // Back/Torso: indices 0 (F), 1 (R), 2 (F), 3 (R)
