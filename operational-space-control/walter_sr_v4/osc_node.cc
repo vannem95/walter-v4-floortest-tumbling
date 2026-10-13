@@ -568,14 +568,14 @@ void OSCNode::timer_callback() {
         const bool initial_back_F  = true;
 
         // Front/Head Flips
-        // bool front_F = initial_front_F;
+        bool front_F = initial_front_F;
         // if (elapsed_t >= z_front_start) {
         //     int flips = static_cast<int>((elapsed_t - z_front_start) / x_front_period) + 1;
         //     if (flips % 2 != 0) front_F = !initial_front_F;
         // }
 
-        // // Back/Torso Flips
-        // bool back_F = initial_back_F;
+        // Back/Torso Flips
+        bool back_F = initial_back_F;
         // if (elapsed_t >= w_back_start) {
         //     int flips = static_cast<int>((elapsed_t - w_back_start) / y_back_period) + 1;
         //     if (flips % 2 != 0) back_F = !initial_back_F;
