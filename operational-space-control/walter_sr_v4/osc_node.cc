@@ -524,7 +524,7 @@ void OSCNode::timer_callback() {
         // ===============================================================
         double elapsed_t = current_time - gait_start_time;
         
-        const double TARGET_VELOCITY = 1.0; // rad/s (Terminal speed)
+        const double TARGET_VELOCITY = 0.5; // rad/s (Terminal speed)
         const double RAMP_DURATION = 1.5;   // seconds
 
         double shin_rot_vel = 0.0;
@@ -556,13 +556,13 @@ void OSCNode::timer_callback() {
         // 2. CONTACT SCHEDULING (Tied securely to REAL elapsed time)
         // ===============================================================
         // These timings MUST be linked to elapsed_t, not the position offset
-        const double x_front_period = 2.13; 
-        const double y_back_period  = 2.13;
+        const double x_front_period = 4.26; 
+        const double y_back_period  = 4.26;
         
         // We must delay the first flip so it happens AFTER the ramp finishes
         // and the robot is at full tumbling speed.
-        const double z_front_start  = 1.9 + RAMP_DURATION; 
-        const double w_back_start   = 0.9 + RAMP_DURATION;
+        const double z_front_start  = 3.50 + RAMP_DURATION; 
+        const double w_back_start   = 1.9 + RAMP_DURATION;
         
         const bool initial_front_F = true;
         const bool initial_back_F  = true;
