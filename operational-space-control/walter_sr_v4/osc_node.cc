@@ -413,7 +413,7 @@ void OSCNode::timer_callback() {
     static Eigen::Vector<double, model::contact_site_ids_size> contact_start_times = Eigen::Vector<double, model::contact_site_ids_size>::Constant(-100.0);
     static Eigen::Vector<double, model::contact_site_ids_size> prev_contact_mask = Eigen::Vector<double, model::contact_site_ids_size>::Zero();
     const double soft_switch_max_force = 770.0; 
-    const double soft_switch_ramp_time = 0.5;    
+    const double soft_switch_ramp_time = 0.15;    
     
 
     Eigen::Quaterniond q_body(local_state.body_rotation(0), local_state.body_rotation(1), 
@@ -609,7 +609,7 @@ void OSCNode::timer_callback() {
             double limit = 0.0;
             if (is_contact) {
                 double duration = current_time - contact_start_times[i];
-                double ratio = std::clamp(duration / soft_switch_ramp_time, 0.0, 1.0);
+                double ratio = std::clamp(0.25 + 0.75*(duration / soft_switch_ramp_time), 0.0, 1.0);
                 limit = ratio * soft_switch_max_force;
             }
             current_force_limits[i] = limit;
