@@ -776,8 +776,8 @@ void OSCNode::timer_callback() {
         // double torso_pitch_vel = local_state.angular_body_velocity(1); 
 
         // Tuned PD Gains for 31kg chassis
-        double roll_kp = 100.0;
-        double roll_kv = 20.0; 
+        double roll_kp = 150.0;
+        double roll_kv = 25.0; 
         
         // double pitch_kp = 600.0; 
         // double pitch_kv = 50.0; 
