@@ -313,9 +313,9 @@ OSCNode::OSCNode(const std::string& xml_path)
 
     // Add your metadata note here!
 
-    data_msg_.layout.dim[0].label = "target_hip_z, hip_z_tl, hip_z_tr, hip_z_hl, hip_z_hr, target_hip_z_vel, hip_zv_tl, hip_zv_tr, hip_zv_hl, hip_zv_hr, shin_pos_tl_target, shin_pos_tr_target, shin_pos_hl_target, shin_pos_hr_target, shin_pos_tl, shin_pos_tr, shin_pos_hl, shin_pos_hr, shin_vel_target, shin_vel_tl, shin_vel_tr, shin_vel_hl, shin_vel_hr, body_x, body_y, body_z, contact_tlf, contact_tlr, contact_trf, contact_trr, contact_hlf, contact_hlr, contact_hrf, contact_hrr, osqp_exit, time_casadi, time_osqp, qp_obj, tau_rlh, tau_rlk, tau_rrh, tau_rrk, tau_flh, tau_flk, tau_frh, tau_frk, fz_tlf, fz_tlr, fz_trf, fz_trr, fz_hlf, fz_hlr, fz_hrf, fz_hrr, global_vx, global_vy, tl_x_tgt, tl_y_tgt, pd_acc_tl, qp_acc_tl, sens_acc_tl, pd_acc_tr, qp_acc_tr, sens_acc_tr, pd_acc_hl, qp_acc_hl, sens_acc_hl, pd_acc_hr, qp_acc_hr, sens_acc_hr"; 
+    data_msg_.layout.dim[0].label = "target_hip_z, hip_z_tl, hip_z_tr, hip_z_hl, hip_z_hr, target_hip_z_vel, hip_zv_tl, hip_zv_tr, hip_zv_hl, hip_zv_hr, shin_pos_tl_target, shin_pos_tr_target, shin_pos_hl_target, shin_pos_hr_target, shin_pos_tl, shin_pos_tr, shin_pos_hl, shin_pos_hr, shin_vel_target, shin_vel_tl, shin_vel_tr, shin_vel_hl, shin_vel_hr, body_x, body_y, body_z, contact_tlf, contact_tlr, contact_trf, contact_trr, contact_hlf, contact_hlr, contact_hrf, contact_hrr, osqp_exit, time_casadi, time_osqp, qp_obj, tau_rlh, tau_rlk, tau_rrh, tau_rrk, tau_flh, tau_flk, tau_frh, tau_frk, fz_tlf, fz_tlr, fz_trf, fz_trr, fz_hlf, fz_hlr, fz_hrf, fz_hrr, global_vx, global_vy, tl_x_tgt, tl_y_tgt, pd_acc_tl, qp_acc_tl, sens_acc_tl, pd_acc_tr, qp_acc_tr, sens_acc_tr, pd_acc_hl, qp_acc_hl, sens_acc_hl, pd_acc_hr, qp_acc_hr, sens_acc_hr, hip_z_cmd_tl, hip_z_cmd_tr, hip_z_cmd_hl, hip_z_cmd_hr, hip_z_qp_tl, hip_z_qp_tr, hip_z_qp_hl, hip_z_qp_hr, hip_z_sens_tl, hip_z_sens_tr, hip_z_sens_hl, hip_z_sens_hr, shin_ry_qp_tl, shin_ry_qp_tr, shin_ry_qp_hl, shin_ry_qp_hr, hip_site_zw_tl, hip_site_zw_tr, hip_site_zw_hl, hip_site_zw_hr, tq_est_rlh, tq_est_rlk, tq_est_rrh, tq_est_rrk, tq_est_flh, tq_est_flk, tq_est_frh, tq_est_frk"; 
     
-    data_msg_.data.reserve(70); // Exactly 54 elements now    
+    data_msg_.data.reserve(100); // Exactly 54 elements now    
     // // Reserve memory so push_back is zero-overhead
     // // data_msg_.data.reserve(num_sites * num_dof);        
     // data_msg_.data.reserve(1);        
@@ -723,6 +723,19 @@ void OSCNode::timer_callback() {
         last_shin_vel_hr = shin_vel_hr;
         // ===============================================================        
 
+        // ===============================================================        
+        // sensed hip z acc
+        static double last_hip_zv[4] = {0.0, 0.0, 0.0, 0.0};
+        const double hip_zv_now[4] = {hip_zv_tl, hip_zv_tr, hip_zv_hl, hip_zv_hr};
+        double sensed_hip_z_acc[4];
+        for (int k = 0; k < 4; ++k) {
+            sensed_hip_z_acc[k] = (hip_zv_now[k] - last_hip_zv[k]) / dt;
+            last_hip_zv[k] = hip_zv_now[k];
+        }        
+        // ===============================================================        
+
+
+
 
         // Torso shins: keep the smooth, overdamped gains that stopped the chatter
         double torso_shin_kp = 80.0; 
@@ -807,6 +820,46 @@ void OSCNode::timer_callback() {
         // Indices: 3 = Roll (Rx), 4 = Pitch (Ry)
         taskspace_targets_.row(0)(3) = torso_roll_ddq_cmd;
 
+
+        // ==============================================================================
+
+
+        
+        // Solve Optimization
+        update_osc_data();
+        
+        // --- TIMING POINT B: END MUJOCO/KINEMATICS, START CASADI/OSQP DATA ---        
+        auto t_start_casadi = std::chrono::high_resolution_clock::now();        
+        
+        update_optimization_data(current_force_limits);
+        std::ignore = update_optimization(current_force_limits); 
+
+        // --- TIMING POINT C: END CASADI/OSQP DATA, START SOLVE ---
+        auto t_start_solve = std::chrono::high_resolution_clock::now();
+
+
+        // OLD: solve_optimization();
+        // NEW: Check result
+        bool solver_success = solve_optimization();
+        
+        if (!solver_success) {
+            // CRITICAL: Trigger safety override immediately if math fails
+            std::lock_guard<std::mutex> lock(state_mutex_);
+            safety_override_active_ = true;
+            local_safety_override_active = true; 
+            RCLCPP_ERROR(this->get_logger(), "Optimization failed! Engaging safety override.");
+        }
+                
+        // --- TIMING POINT D: END SOLVE ---
+        auto t_end_solve = std::chrono::high_resolution_clock::now();
+        
+        // Calculate and store internal execution times 
+        time_mujoco_update_ms_ = std::chrono::duration<double, std::milli>(t_start_casadi - t_start_kinematics).count();
+        time_casadi_update_ms_ = std::chrono::duration<double, std::milli>(t_start_solve - t_start_casadi).count();
+        time_osqp_solve_ms_ = std::chrono::duration<double, std::milli>(t_end_solve - t_start_solve).count();      
+        
+        //---------------------
+        // Telemetry block
         data_msg_.data.clear();
 
         data_msg_.data.push_back(target_hip_z);
@@ -862,7 +915,7 @@ void OSCNode::timer_callback() {
         data_msg_.data.push_back(quadratic_term + linear_term);
 
         // --- TORQUES ---
-        Vector<model::nu_size> osc_torque = solution_(Eigen::seqN(optimization::dv_idx, optimization::u_size));
+        Vector<model::nu_size> osc_torque = solution_(Eigen::seqN(optimization::u_idx, optimization::u_size));
         for (int i = 0; i < model::nu_size; ++i) {
             data_msg_.data.push_back(osc_torque(i));
         }
@@ -906,46 +959,24 @@ void OSCNode::timer_callback() {
         data_msg_.data.push_back(sensed_acc_hr);
         // ==============================================================================        
 
+        // --- HIP Z / SHIN: commanded vs QP-achieved vs sensed ---
+        Vector<model::nv_size> ddq_qp = solution_(Eigen::seqN(optimization::dv_idx, model::nv_size));
+        auto task_acc = [&](int row) {
+            return osc_data_.taskspace_jacobian.row(row).dot(ddq_qp) + osc_data_.taskspace_bias(row);
+        };
+        const double hip_cmd[4] = {tl_hip_z_ddq_cmd, tr_hip_z_ddq_cmd, hl_hip_z_ddq_cmd, hr_hip_z_ddq_cmd};
 
+        for (int k = 0; k < 4; ++k) data_msg_.data.push_back(hip_cmd[k]);                          // hip_z_cmd
+        for (int k = 0; k < 4; ++k) data_msg_.data.push_back(task_acc(3 * (5 + k) + 2));           // hip_z_qp
+        for (int k = 0; k < 4; ++k) data_msg_.data.push_back(sensed_hip_z_acc[k]);                 // hip_z_sens
+        for (int k = 0; k < 4; ++k) data_msg_.data.push_back(task_acc(optimization::p_size + 3 * (1 + k) + 1)); // shin_ry_qp
+        for (int k = 0; k < 4; ++k) data_msg_.data.push_back(mj_data_->site_xpos[3 * site_ids_[5 + k] + 2]);    // hip_site_zw
+        for (int i = 0; i < model::nu_size; ++i) data_msg_.data.push_back(local_state.torque_estimate(i));      // tq_est        
 
-        // 3. Publish
-        data_pub_->publish(data_msg_);
-        // ==============================================================================
 
 
         
-        // Solve Optimization
-        update_osc_data();
-        
-        // --- TIMING POINT B: END MUJOCO/KINEMATICS, START CASADI/OSQP DATA ---        
-        auto t_start_casadi = std::chrono::high_resolution_clock::now();        
-        
-        update_optimization_data(current_force_limits);
-        std::ignore = update_optimization(current_force_limits); 
 
-        // --- TIMING POINT C: END CASADI/OSQP DATA, START SOLVE ---
-        auto t_start_solve = std::chrono::high_resolution_clock::now();
-
-
-        // OLD: solve_optimization();
-        // NEW: Check result
-        bool solver_success = solve_optimization();
-        
-        if (!solver_success) {
-            // CRITICAL: Trigger safety override immediately if math fails
-            std::lock_guard<std::mutex> lock(state_mutex_);
-            safety_override_active_ = true;
-            local_safety_override_active = true; 
-            RCLCPP_ERROR(this->get_logger(), "Optimization failed! Engaging safety override.");
-        }
-                
-        // --- TIMING POINT D: END SOLVE ---
-        auto t_end_solve = std::chrono::high_resolution_clock::now();
-        
-        // Calculate and store internal execution times 
-        time_mujoco_update_ms_ = std::chrono::duration<double, std::milli>(t_start_casadi - t_start_kinematics).count();
-        time_casadi_update_ms_ = std::chrono::duration<double, std::milli>(t_start_solve - t_start_casadi).count();
-        time_osqp_solve_ms_ = std::chrono::duration<double, std::milli>(t_end_solve - t_start_solve).count();                
     }
 
     if (!local_safety_override_active) {
@@ -960,6 +991,12 @@ void OSCNode::timer_callback() {
     last_time_ = current_time;
     // Publish using the determined safety status and the captured timestamp
     publish_torque_command(local_safety_override_active, local_state_read_time); 
+
+    // ==============================================================================        
+    // 3. Publish
+    data_pub_->publish(data_msg_);        
+    // ==============================================================================        
+
 }
 // ---------------------------------------------------------------------------------------------------------
 
