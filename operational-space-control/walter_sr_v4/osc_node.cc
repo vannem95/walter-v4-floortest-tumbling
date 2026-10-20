@@ -818,7 +818,7 @@ void OSCNode::timer_callback() {
         
         // row(0) is the Torso tracking task: [x, y, z, roll, pitch, yaw]
         // Indices: 3 = Roll (Rx), 4 = Pitch (Ry)
-        taskspace_targets_.row(0)(3) = torso_roll_ddq_cmd;
+        // taskspace_targets_.row(0)(3) = torso_roll_ddq_cmd;
 
 
         // ==============================================================================
