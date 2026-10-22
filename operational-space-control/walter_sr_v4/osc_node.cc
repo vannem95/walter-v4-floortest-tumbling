@@ -742,7 +742,7 @@ void OSCNode::timer_callback() {
         double torso_shin_kv = 35.0;
 
         // Head shins: stiffer Kp and Kv to punch through the uphill apex load
-        double head_shin_kp  = 250.0; 
+        double head_shin_kp  = 175.0; 
         double head_shin_kv  = 95.0;
 
         // Shin DDQ Commands
