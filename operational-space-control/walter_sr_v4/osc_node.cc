@@ -313,9 +313,9 @@ OSCNode::OSCNode(const std::string& xml_path)
 
     // Add your metadata note here!
 
-    data_msg_.layout.dim[0].label = "target_hip_z, hip_z_tl, hip_z_tr, hip_z_hl, hip_z_hr, target_hip_z_vel, hip_zv_tl, hip_zv_tr, hip_zv_hl, hip_zv_hr, shin_pos_tl_target, shin_pos_tr_target, shin_pos_hl_target, shin_pos_hr_target, shin_pos_tl, shin_pos_tr, shin_pos_hl, shin_pos_hr, shin_vel_target, shin_vel_tl, shin_vel_tr, shin_vel_hl, shin_vel_hr, body_x, body_y, body_z, contact_tlf, contact_tlr, contact_trf, contact_trr, contact_hlf, contact_hlr, contact_hrf, contact_hrr, osqp_exit, time_casadi, time_osqp, qp_obj, tau_rlh, tau_rlk, tau_rrh, tau_rrk, tau_flh, tau_flk, tau_frh, tau_frk, fz_tlf, fz_tlr, fz_trf, fz_trr, fz_hlf, fz_hlr, fz_hrf, fz_hrr, global_vx, global_vy, tl_x_tgt, tl_y_tgt, pd_acc_tl, qp_acc_tl, sens_acc_tl, pd_acc_tr, qp_acc_tr, sens_acc_tr, pd_acc_hl, qp_acc_hl, sens_acc_hl, pd_acc_hr, qp_acc_hr, sens_acc_hr, hip_z_cmd_tl, hip_z_cmd_tr, hip_z_cmd_hl, hip_z_cmd_hr, hip_z_qp_tl, hip_z_qp_tr, hip_z_qp_hl, hip_z_qp_hr, hip_z_sens_tl, hip_z_sens_tr, hip_z_sens_hl, hip_z_sens_hr, shin_ry_qp_tl, shin_ry_qp_tr, shin_ry_qp_hl, shin_ry_qp_hr, hip_site_zw_tl, hip_site_zw_tr, hip_site_zw_hl, hip_site_zw_hr, tq_est_rlh, tq_est_rlk, tq_est_rrh, tq_est_rrk, tq_est_flh, tq_est_flk, tq_est_frh, tq_est_frk"; 
+    data_msg_.layout.dim[0].label = "target_hip_z, hip_z_tl, hip_z_tr, hip_z_hl, hip_z_hr, target_hip_z_vel, hip_zv_tl, hip_zv_tr, hip_zv_hl, hip_zv_hr, shin_pos_tl_target, shin_pos_tr_target, shin_pos_hl_target, shin_pos_hr_target, shin_pos_tl, shin_pos_tr, shin_pos_hl, shin_pos_hr, shin_vel_target, shin_vel_tl, shin_vel_tr, shin_vel_hl, shin_vel_hr, body_x, body_y, body_z, contact_tlf, contact_tlr, contact_trf, contact_trr, contact_hlf, contact_hlr, contact_hrf, contact_hrr, osqp_exit, time_casadi, time_osqp, qp_obj, tau_rlh, tau_rlk, tau_rrh, tau_rrk, tau_flh, tau_flk, tau_frh, tau_frk, fz_tlf, fz_tlr, fz_trf, fz_trr, fz_hlf, fz_hlr, fz_hrf, fz_hrr, global_vx, global_vy, tl_x_tgt, tl_y_tgt, pd_acc_tl, qp_acc_tl, sens_acc_tl, pd_acc_tr, qp_acc_tr, sens_acc_tr, pd_acc_hl, qp_acc_hl, sens_acc_hl, pd_acc_hr, qp_acc_hr, sens_acc_hr, hip_z_cmd_tl, hip_z_cmd_tr, hip_z_cmd_hl, hip_z_cmd_hr, hip_z_qp_tl, hip_z_qp_tr, hip_z_qp_hl, hip_z_qp_hr, hip_z_sens_tl, hip_z_sens_tr, hip_z_sens_hl, hip_z_sens_hr, shin_ry_qp_tl, shin_ry_qp_tr, shin_ry_qp_hl, shin_ry_qp_hr, hip_site_zw_tl, hip_site_zw_tr, hip_site_zw_hl, hip_site_zw_hr, tq_est_rlh, tq_est_rlk, tq_est_rrh, tq_est_rrk, tq_est_flh, tq_est_flk, tq_est_frh, tq_est_frk, qfrc_rlk, qfrc_rrk, qfrc_flk,qfrc_frk"; 
     
-    data_msg_.data.reserve(100); // Exactly 54 elements now    
+    data_msg_.data.reserve(104); // Exactly 54 elements now    
     // // Reserve memory so push_back is zero-overhead
     // // data_msg_.data.reserve(num_sites * num_dof);        
     // data_msg_.data.reserve(1);        
@@ -971,7 +971,14 @@ void OSCNode::timer_callback() {
         for (int k = 0; k < 4; ++k) data_msg_.data.push_back(sensed_hip_z_acc[k]);                 // hip_z_sens
         for (int k = 0; k < 4; ++k) data_msg_.data.push_back(task_acc(optimization::p_size + 3 * (1 + k) + 1)); // shin_ry_qp
         for (int k = 0; k < 4; ++k) data_msg_.data.push_back(mj_data_->site_xpos[3 * site_ids_[5 + k] + 2]);    // hip_site_zw
-        for (int i = 0; i < model::nu_size; ++i) data_msg_.data.push_back(local_state.torque_estimate(i));      // tq_est        
+        for (int i = 0; i < model::nu_size; ++i) data_msg_.data.push_back(local_state.torque_estimate(i));      // tq_est
+        
+        
+
+        // Log qfrc_bias for the 4 knee joints (DOFs for rlk, rrk, flk, frk)
+        for (int dof_idx : {7, 9, 11, 13}) {
+            data_msg_.data.push_back(mj_data_->qfrc_bias[dof_idx]);
+        }
 
 
 
