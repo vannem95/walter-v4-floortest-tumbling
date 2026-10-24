@@ -976,12 +976,9 @@ void OSCNode::timer_callback() {
         
 
         // Log qfrc_bias for the 4 knee joints (DOFs for rlk, rrk, flk, frk)
-        for (int dof_idx : {7, 9, 11, 13}) {
-            data_msg_.data.push_back(mj_data_->qfrc_bias[dof_idx]);
+        for (int i : {1, 3, 5, 7}) {
+            data_msg_.data.push_back(osc_data_.coriolis_matrix(6 + i));
         }
-
-
-
         
 
     }
