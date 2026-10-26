@@ -72,21 +72,21 @@ weights_config:
   # hrh_translational_tracking: 100.0
   # hrh_rotational_tracking: 0.0
 
-  tlf_translational_tracking: 1.0
-  tlf_rotational_tracking: 1.0
-  tlr_translational_tracking: 1.0
-  tlr_rotational_tracking: 1.0
-  trf_translational_tracking: 1.0
-  trf_rotational_tracking: 1.0
-  trr_translational_tracking: 1.0
-  trr_rotational_tracking: 1.0
-  hlf_translational_tracking: 1.0
-  hlf_rotational_tracking: 1.0
-  hlr_translational_tracking: 1.0
-  hlr_rotational_tracking: 1.0
-  hrf_translational_tracking: 1.0
-  hrf_rotational_tracking: 1.0
-  hrr_translational_tracking: 1.0
-  hrr_rotational_tracking: 1.0
+  tlf_translational_tracking: 100.0
+  tlf_rotational_tracking: 100.0
+  tlr_translational_tracking: 100.0
+  tlr_rotational_tracking: 100.0
+  trf_translational_tracking: 100.0
+  trf_rotational_tracking: 100.0
+  trr_translational_tracking: 100.0
+  trr_rotational_tracking: 100.0
+  hlf_translational_tracking: 100.0
+  hlf_rotational_tracking: 100.0
+  hlr_translational_tracking: 100.0
+  hlr_rotational_tracking: 100.0
+  hrf_translational_tracking: 100.0
+  hrf_rotational_tracking: 100.0
+  hrr_translational_tracking: 100.0
+  hrr_rotational_tracking: 100.0
   torque: 1.0e-4
   regularization: 1.0e-4
