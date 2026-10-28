@@ -334,5 +334,1118 @@
     "https://bcr.bazel.build/modules/zstd/1.5.7/source.json": "f72c48184b6528ffc908a5a2bcbf3070c6684f3db03da2182c8ca999ae5f5cfd"
   },
   "selectedYankedVersions": {},
-  "moduleExtensions": {}
+  "moduleExtensions": {
+    "@@apple_support+//crosstool:setup.bzl%apple_cc_configure_extension": {
+      "general": {
+        "bzlTransitiveDigest": "xcBTf2+GaloFpg7YEh/Bv+1yAczRkiCt3DGws4K7kSk=",
+        "usagesDigest": "3L+PK6aRnliv0iIS8m3kdo+LjmvjJWoFCm3qZcPSg+8=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "local_config_apple_cc_toolchains": {
+            "repoRuleId": "@@apple_support+//crosstool:setup.bzl%_apple_cc_autoconf_toolchains",
+            "attributes": {}
+          },
+          "local_config_apple_cc": {
+            "repoRuleId": "@@apple_support+//crosstool:setup.bzl%_apple_cc_autoconf",
+            "attributes": {}
+          }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "apple_support+",
+            "bazel_tools",
+            "bazel_tools"
+          ],
+          [
+            "bazel_tools",
+            "rules_cc",
+            "rules_cc+"
+          ]
+        ]
+      }
+    },
+    "@@com_github_mvukov_rules_ros2+//ros2:extensions.bzl%non_module_deps": {
+      "general": {
+        "bzlTransitiveDigest": "ryS5CyneTmIais4uiE3zRYIHtAMgTPq8sS5GR4XcoaE=",
+        "usagesDigest": "hkwkkkXcwA9fN0j5WwUqf9puC6qSocA3ht0knx8Vi5U=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "ros2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:ros2.BUILD.bazel",
+              "sha256": "67757489197ea587d1832cccc2318f38468a760dfcf7627cffd78e2a4e25ac4a",
+              "strip_prefix": "ros2-release-humble-20241205",
+              "urls": [
+                "https://github.com/ros2/ros2/archive/refs/tags/release-humble-20241205.tar.gz"
+              ]
+            }
+          },
+          "ros2_ament_index": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:ament_index.BUILD.bazel",
+              "sha256": "e66896e255653508cb2bdecd7789f8dd5a03d7d2b4a1dd37445821a5679c447c",
+              "strip_prefix": "ament_index-1.4.0",
+              "url": "https://github.com/ament/ament_index/archive/refs/tags/1.4.0.tar.gz"
+            }
+          },
+          "ros2_class_loader": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:class_loader.BUILD.bazel",
+              "sha256": "a85a99b93fcad7c8d9686672b8e3793200b1da9d8feab7ab3a9962e34ab1f675",
+              "strip_prefix": "class_loader-2.2.0",
+              "url": "https://github.com/ros/class_loader/archive/refs/tags/2.2.0.tar.gz"
+            }
+          },
+          "ros2_common_interfaces": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:common_interfaces.BUILD.bazel",
+              "sha256": "d4aeb9f5aa2d5af9938ac4e32c6b7878586096951036c08f1e46fcacdc577c97",
+              "strip_prefix": "common_interfaces-4.2.4",
+              "url": "https://github.com/ros2/common_interfaces/archive/refs/tags/4.2.4.tar.gz"
+            }
+          },
+          "cyclonedds": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:cyclonedds.BUILD.bazel",
+              "sha256": "ec3ec898c52b02f939a969cd1a276e219420e5e8419b21cea276db35b4821848",
+              "strip_prefix": "cyclonedds-0.10.5",
+              "url": "https://github.com/eclipse-cyclonedds/cyclonedds/archive/refs/tags/0.10.5.tar.gz"
+            }
+          },
+          "ros2_geometry2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:geometry2.BUILD.bazel",
+              "patch_args": [
+                "-p1"
+              ],
+              "patches": [
+                "@@com_github_mvukov_rules_ros2+//repositories/patches:geometry2_fix-use-after-free-bug.patch"
+              ],
+              "sha256": "5c273ff836ab9268c01ad240e0d31aca6765b44c3759fce0e87b700381feddfd",
+              "strip_prefix": "geometry2-0.25.9",
+              "url": "https://github.com/ros2/geometry2/archive/refs/tags/0.25.9.tar.gz"
+            }
+          },
+          "iceoryx": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "strip_prefix": "iceoryx-2.0.5",
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:iceoryx.BUILD.bazel",
+              "sha256": "bf6de70e3edee71223f993a29bff5e61af95ce4871104929d8bd1729f544bafb",
+              "url": "https://github.com/eclipse-iceoryx/iceoryx/archive/refs/tags/v2.0.5.tar.gz"
+            }
+          },
+          "ros2_image_common": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:image_common.BUILD.bazel",
+              "sha256": "0433ed59cb813f14072c83511889d6950af0c223e346cd7ff95916274a3135cd",
+              "strip_prefix": "image_common-3.1.9",
+              "url": "https://github.com/ros-perception/image_common/archive/refs/tags/3.1.9.tar.gz"
+            }
+          },
+          "ros2_kdl_parser": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:kdl_parser.BUILD.bazel",
+              "sha256": "f28da9bd7eaa8995f4b67bc9c8321d7467043aa43e01b918aa239b8b9971bf56",
+              "strip_prefix": "kdl_parser-2.6.4",
+              "url": "https://github.com/ros/kdl_parser/archive/refs/tags/2.6.4.tar.gz"
+            }
+          },
+          "ros2_keyboard_handler": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:keyboard_handler.BUILD.bazel",
+              "sha256": "36e64e9e1927a6026e1b45cafc4c8efd32db274bfab5da0edd273a583f3c73f4",
+              "strip_prefix": "keyboard_handler-0.0.5",
+              "url": "https://github.com/ros-tooling/keyboard_handler/archive/refs/tags/0.0.5.tar.gz"
+            }
+          },
+          "ros2_launch": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:launch.BUILD.bazel",
+              "sha256": "16c29a3774ed13e09195c9f3d58f4199fa0913a324b8e67f3de2a2da676ce4c7",
+              "strip_prefix": "launch-1.0.7",
+              "url": "https://github.com/ros2/launch/archive/refs/tags/1.0.7.tar.gz"
+            }
+          },
+          "ros2_launch_ros": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:launch_ros.BUILD.bazel",
+              "sha256": "fa7f6b4e32260629ea8752a50f3d97650fe79b589255bc6cd20b0f08d0cfc3f1",
+              "strip_prefix": "launch_ros-0.19.8",
+              "url": "https://github.com/ros2/launch_ros/archive/refs/tags/0.19.8.tar.gz"
+            }
+          },
+          "ros2_libstatistics_collector": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:libstatistics_collector.BUILD.bazel",
+              "sha256": "f16eb49c77a37db2b5344a6100d9697b19a55692e36118fb28817089a8d34351",
+              "strip_prefix": "libstatistics_collector-1.3.4",
+              "url": "https://github.com/ros-tooling/libstatistics_collector/archive/refs/tags/1.3.4.tar.gz"
+            }
+          },
+          "ros2_message_filters": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:message_filters.BUILD.bazel",
+              "sha256": "fd64677763d15583a8f5efcdf45dd43548afb3f4e4bf1fb79eed55351d6b983b",
+              "strip_prefix": "message_filters-4.3.5",
+              "url": "https://github.com/ros2/message_filters/archive/refs/tags/4.3.5.tar.gz"
+            }
+          },
+          "osrf_pycommon": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:osrf_pycommon.BUILD.bazel",
+              "sha256": "a5c57a1021d1620cfe4620c4f1611e040de86e7afcce53509e968a4098ce1fa2",
+              "strip_prefix": "osrf_pycommon-2.1.4",
+              "url": "https://github.com/osrf/osrf_pycommon/archive/refs/tags/2.1.4.tar.gz"
+            }
+          },
+          "ros2_pluginlib": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:pluginlib.BUILD.bazel",
+              "sha256": "74188b886f9bbe7e857d21f3bb50b480e7c0e5adab97c10563dc17013600198b",
+              "strip_prefix": "pluginlib-5.1.0",
+              "url": "https://github.com/ros/pluginlib/archive/refs/tags/5.1.0.tar.gz"
+            }
+          },
+          "ros2_rcl": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rcl.BUILD.bazel",
+              "sha256": "81519ac2fff7cd811604514e64f97c85933b7729e090eb60a6278355ed30f13f",
+              "strip_prefix": "rcl-5.3.9",
+              "url": "https://github.com/ros2/rcl/archive/refs/tags/5.3.9.tar.gz",
+              "patches": [
+                "@@com_github_mvukov_rules_ros2+//repositories/patches:fix-null-allocator-and-racy-condition.-1188.patch"
+              ]
+            }
+          },
+          "ros2_rcl_interfaces": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rcl_interfaces.BUILD.bazel",
+              "sha256": "e267048c9f78aabed4b4be11bb028c8488127587e5065c3b3daff3550df25875",
+              "strip_prefix": "rcl_interfaces-1.2.1",
+              "url": "https://github.com/ros2/rcl_interfaces/archive/refs/tags/1.2.1.tar.gz"
+            }
+          },
+          "ros2_rcl_logging": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rcl_logging.BUILD.bazel",
+              "sha256": "f711a7677cb68c927650e5e9f6bbb5d013dd9ae30736209f9b70f9c6485170f6",
+              "strip_prefix": "rcl_logging-2.3.1",
+              "url": "https://github.com/ros2/rcl_logging/archive/refs/tags/2.3.1.tar.gz"
+            }
+          },
+          "ros2_rclcpp": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rclcpp.BUILD.bazel",
+              "patch_cmds": [
+                "patch"
+              ],
+              "patch_args": [
+                "-p1"
+              ],
+              "patches": [
+                "@@com_github_mvukov_rules_ros2+//repositories/patches:rclcpp_do-not-allocate-in-signal-handler.patch",
+                "@@com_github_mvukov_rules_ros2+//repositories/patches:rclcpp_fix-maybe-uninitialized-warning.patch",
+                "@@com_github_mvukov_rules_ros2+//repositories/patches:rclcpp_ts_libs_ownership.patch"
+              ],
+              "sha256": "f2102798b3fd7c11eba2728b35f5aca34add9acc7beb42d0a7e9cfcda12eea3d",
+              "strip_prefix": "rclcpp-16.0.11",
+              "url": "https://github.com/ros2/rclcpp/archive/refs/tags/16.0.11.tar.gz"
+            }
+          },
+          "ros2_rclpy": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rclpy.BUILD.bazel",
+              "sha256": "2dadc5b7f05d3993c487a8e721e612d62e82b96fa7d243ccd84f048b1a123a41",
+              "strip_prefix": "rclpy-3.3.15",
+              "url": "https://github.com/ros2/rclpy/archive/refs/tags/3.3.15.tar.gz"
+            }
+          },
+          "ros2_rcpputils": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rcpputils.BUILD.bazel",
+              "sha256": "40554ef269f40e242175c3f17ae88e77d2bd1768eb4c5a8d0d01b94f59d28948",
+              "strip_prefix": "rcpputils-2.4.4",
+              "url": "https://github.com/ros2/rcpputils/archive/refs/tags/2.4.4.tar.gz"
+            }
+          },
+          "ros2_rcutils": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rcutils.BUILD.bazel",
+              "patches": [
+                "@@com_github_mvukov_rules_ros2+//repositories/patches:rcutils_fix-setting-allocator-to-null.-478.patch"
+              ],
+              "sha256": "b64c3077162bc845a7c410180bc6c78e63e3a7562285b74c0982eee101ea0f28",
+              "strip_prefix": "rcutils-5.1.6",
+              "url": "https://github.com/ros2/rcutils/archive/refs/tags/5.1.6.tar.gz"
+            }
+          },
+          "ros2_resource_retriever": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:resource_retriever.BUILD.bazel",
+              "sha256": "5b4e1411ed955c0562f4609d9025143bf9199d405cbc471484b83f3cbab59162",
+              "strip_prefix": "resource_retriever-3.1.2",
+              "url": "https://github.com/ros/resource_retriever/archive/refs/tags/3.1.2.tar.gz"
+            }
+          },
+          "ros2_rmw": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rmw.BUILD.bazel",
+              "patches": [
+                "@@com_github_mvukov_rules_ros2+//repositories/patches:rmw_initialize-the-null-strucutre-with-static-value.-378.patch"
+              ],
+              "sha256": "fc5eb606c44773a585f6332b33b8fe56c103821cd91e3b95c31a7ab57d38fa0e",
+              "strip_prefix": "rmw-6.1.2",
+              "url": "https://github.com/ros2/rmw/archive/refs/tags/6.1.2.tar.gz"
+            }
+          },
+          "ros2_rmw_cyclonedds": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rmw_cyclonedds.BUILD.bazel",
+              "sha256": "58ef4fe3fd18eb723906df77eb10df1e69222b451e479c6ec85426ba48e16a8a",
+              "strip_prefix": "rmw_cyclonedds-1.3.4",
+              "url": "https://github.com/ros2/rmw_cyclonedds/archive/refs/tags/1.3.4.tar.gz"
+            }
+          },
+          "ros2_rmw_dds_common": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rmw_dds_common.BUILD.bazel",
+              "sha256": "85dd9f586d53b658e5389a388fe3d99a884ba06f567a59f9908ecb96e29132ef",
+              "strip_prefix": "rmw_dds_common-1.6.0",
+              "url": "https://github.com/ros2/rmw_dds_common/archive/refs/tags/1.6.0.tar.gz"
+            }
+          },
+          "ros2_rmw_implementation": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rmw_implementation.BUILD.bazel",
+              "patch_args": [
+                "-p1"
+              ],
+              "patches": [
+                "@@com_github_mvukov_rules_ros2+//repositories/patches:rmw_implementation_library_path.patch"
+              ],
+              "sha256": "c8a4d8160b27aa290eb90f756b6d656011329411a496feab7fb6cf976f964c93",
+              "strip_prefix": "rmw_implementation-2.8.4",
+              "url": "https://github.com/ros2/rmw_implementation/archive/refs/tags/2.8.4.tar.gz"
+            }
+          },
+          "ros2_robot_state_publisher": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:robot_state_publisher.BUILD.bazel",
+              "sha256": "74235a379ae3bcaf6a6236ddd36feccea6463749057b09f3409bcbced0c047f9",
+              "strip_prefix": "robot_state_publisher-3.0.3",
+              "url": "https://github.com/ros/robot_state_publisher/archive/refs/tags/3.0.3.tar.gz"
+            }
+          },
+          "ros2_tracing": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:ros2_tracing.BUILD.bazel",
+              "sha256": "261672e689e583c90b35d97ccea90ffec649ac55a0f045da46cbc3f69b657c5a",
+              "strip_prefix": "ros2_tracing-4.1.1",
+              "url": "https://github.com/ros2/ros2_tracing/archive/refs/tags/4.1.1.tar.gz"
+            }
+          },
+          "ros2cli": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:ros2cli.BUILD.bazel",
+              "patches": [
+                "@@com_github_mvukov_rules_ros2+//repositories/patches:ros2cli_replace-netifaces.patch"
+              ],
+              "sha256": "b7a1f137839f426fbcbb45727d8cbee9ee60ee9949502e5daf4288513397cefa",
+              "strip_prefix": "ros2cli-0.18.11",
+              "url": "https://github.com/ros2/ros2cli/archive/refs/tags/0.18.11.tar.gz"
+            }
+          },
+          "ros2_rosbag2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rosbag2.BUILD.bazel",
+              "patch_args": [
+                "-p1"
+              ],
+              "patches": [
+                "@@com_github_mvukov_rules_ros2+//repositories/patches:rosbag2_relax_plugin_errors.patch"
+              ],
+              "sha256": "035f4346bdc4bee7b86fed277658bc045b627f5517085fdf3a453285b274ee3c",
+              "strip_prefix": "rosbag2-0.15.13",
+              "url": "https://github.com/ros2/rosbag2/archive/refs/tags/0.15.13.tar.gz"
+            }
+          },
+          "ros2_rosidl": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rosidl.BUILD.bazel",
+              "patch_args": [
+                "-p1"
+              ],
+              "patches": [
+                "@@com_github_mvukov_rules_ros2+//repositories/patches:rosidl_rm_unnecessary_asserts.patch"
+              ],
+              "sha256": "5ff212dd63e3ea99521f323a871641e40aee3f7f896f377a467c19b94e80d01c",
+              "strip_prefix": "rosidl-3.1.6",
+              "url": "https://github.com/ros2/rosidl/archive/refs/tags/3.1.6.tar.gz"
+            }
+          },
+          "ros2_rosidl_python": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rosidl_python.BUILD.bazel",
+              "patch_args": [
+                "-p1"
+              ],
+              "patches": [
+                "@@com_github_mvukov_rules_ros2+//repositories/patches:rosidl_python_fix_imports.patch"
+              ],
+              "sha256": "4bb38b6718a0c23aa6d799548c4cfd021ba320294673e75eaf3137821e1234d1",
+              "strip_prefix": "rosidl_python-0.14.4",
+              "url": "https://github.com/ros2/rosidl_python/archive/refs/tags/0.14.4.tar.gz"
+            }
+          },
+          "ros2_rosidl_runtime_py": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rosidl_runtime_py.BUILD.bazel",
+              "sha256": "4006ed60e2544eb390a6231c3e7a676d1605601260417b4b207ef94424a38b26",
+              "strip_prefix": "rosidl_runtime_py-0.9.3",
+              "url": "https://github.com/ros2/rosidl_runtime_py/archive/refs/tags/0.9.3.tar.gz"
+            }
+          },
+          "ros2_rosidl_typesupport": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rosidl_typesupport.BUILD.bazel",
+              "patch_args": [
+                "-p1"
+              ],
+              "patches": [
+                "@@com_github_mvukov_rules_ros2+//repositories/patches:rosidl_typesupport_generate_true_c_code.patch"
+              ],
+              "sha256": "b330a869ce00eeb5345488fcd4c894464d5a5e3de601c553a9aaad78d2f5b34c",
+              "strip_prefix": "rosidl_typesupport-2.0.2",
+              "url": "https://github.com/ros2/rosidl_typesupport/archive/refs/tags/2.0.2.tar.gz"
+            }
+          },
+          "ros2_rpyutils": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rpyutils.BUILD.bazel",
+              "sha256": "f87d8c0a2b1a5c28b722f168d7170076e6d82e68c5cb31cff74f15a9fa251fb9",
+              "strip_prefix": "rpyutils-0.2.1",
+              "url": "https://github.com/ros2/rpyutils/archive/refs/tags/0.2.1.tar.gz"
+            }
+          },
+          "ros2_unique_identifier_msgs": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:unique_identifier_msgs.BUILD.bazel",
+              "sha256": "ccedcb7c2b6d927fc4f654cceab299a8cb55082953867754795c6ea2ccdd68a9",
+              "strip_prefix": "unique_identifier_msgs-2.2.1",
+              "url": "https://github.com/ros2/unique_identifier_msgs/archive/refs/tags/2.2.1.tar.gz"
+            }
+          },
+          "ros2_urdfdom": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:urdfdom.BUILD.bazel",
+              "sha256": "1072b2a304295eb299ed70d99914eb2fbf8843c3257e5e51defc5dd457ee6211",
+              "strip_prefix": "urdfdom-3.0.2",
+              "url": "https://github.com/ros/urdfdom/archive/refs/tags/3.0.2.tar.gz"
+            }
+          },
+          "ros2_urdfdom_headers": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:urdfdom_headers.BUILD.bazel",
+              "sha256": "1acd50b976f642de9dc0fde532eb8d77ea09f4de12ebfbd9d88b0cd2891278fd",
+              "strip_prefix": "urdfdom_headers-1.0.6",
+              "url": "https://github.com/ros/urdfdom_headers/archive/refs/tags/1.0.6.tar.gz"
+            }
+          },
+          "ros2_gps_umd": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:gps_umd.BUILD.bazel",
+              "sha256": "64a96f93053d0d59e8fcccceab5408a7d666dd813d4c12df139ef24d916f49ab",
+              "strip_prefix": "gps_umd-fc782811804fafb12ee479a48a2aa2e9ee942e2d",
+              "urls": [
+                "https://github.com/swri-robotics/gps_umd/archive/fc782811804fafb12ee479a48a2aa2e9ee942e2d.tar.gz"
+              ]
+            }
+          },
+          "foxglove_bridge": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:foxglove_bridge.BUILD.bazel",
+              "sha256": "9548f6a53794cfcd6dcae570e6e82aa2c7670d177269ecf612838655d7ba7dcc",
+              "strip_prefix": "ros-foxglove-bridge-0.7.9",
+              "urls": [
+                "https://github.com/foxglove/ros-foxglove-bridge/archive/refs/tags/0.7.9.tar.gz"
+              ]
+            }
+          },
+          "ros2_xacro": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:xacro.BUILD.bazel",
+              "sha256": "6df0d44af8a6bf9f23f0536ce167a0cd7b4c01281100dfea7e17d504363b424d",
+              "strip_prefix": "xacro-2.0.13",
+              "urls": [
+                "https://github.com/ros/xacro/archive/refs/tags/2.0.13.tar.gz"
+              ]
+            }
+          },
+          "orocos_kdl": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:orocos_kdl.BUILD.bazel",
+              "sha256": "22df47f63d91d014af2675029c23da83748575c12a6481fda3ed9235907cc259",
+              "strip_prefix": "orocos_kinematics_dynamics-507de66205e14b12c8c65f25eafc05c4dc66e21e",
+              "urls": [
+                "https://github.com/orocos/orocos_kinematics_dynamics/archive/507de66205e14b12c8c65f25eafc05c4dc66e21e.tar.gz"
+              ]
+            }
+          },
+          "ros2_urdf": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:urdf.BUILD.bazel",
+              "sha256": "a762eb57dc7f60b9ada0240fd7c609f0dc5028ef0b4b65972daf91e009e52cf6",
+              "strip_prefix": "urdf-2.6.0",
+              "urls": [
+                "https://github.com/ros2/urdf/archive/refs/tags/2.6.0.tar.gz"
+              ],
+              "patch_args": [
+                "-p1"
+              ],
+              "patches": [
+                "@@com_github_mvukov_rules_ros2+//repositories/patches:urdf_plugin_loader_fix.patch"
+              ]
+            }
+          },
+          "ros2_diagnostics": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:diagnostics.BUILD.bazel",
+              "sha256": "a723dae7acf0f00ee643c076c7c81299be0254919f29225ec7a89dc14cb8ea6f",
+              "strip_prefix": "diagnostics-9f402787ea2c9b3dd4d7e51a9986810e8a3400ba",
+              "urls": [
+                "https://github.com/ros/diagnostics/archive/9f402787ea2c9b3dd4d7e51a9986810e8a3400ba.zip"
+              ]
+            }
+          },
+          "console_bridge": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:console_bridge.BUILD.bazel",
+              "sha256": "303a619c01a9e14a3c82eb9762b8a428ef5311a6d46353872ab9a904358be4a4",
+              "strip_prefix": "console_bridge-1.0.2",
+              "urls": [
+                "https://github.com/ros/console_bridge/archive/1.0.2.tar.gz"
+              ]
+            }
+          },
+          "mcap": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:mcap.BUILD.bazel",
+              "sha256": "69bcd33e1590201ea180e9e6ba8a22f3e8e7e2283e9ebcbff6a2c7134d8341db",
+              "strip_prefix": "mcap-releases-cpp-v1.4.1/cpp/mcap",
+              "urls": [
+                "https://github.com/foxglove/mcap/archive/refs/tags/releases/cpp/v1.4.1.tar.gz"
+              ]
+            }
+          },
+          "ros2_rcl_logging_syslog": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@com_github_mvukov_rules_ros2+//repositories:rcl_logging_syslog.BUILD.bazel",
+              "sha256": "89039a8d05d1d14ccb85a3d065871d54cce831522bd8aa687e27eb6afd333d07",
+              "strip_prefix": "rcl_logging_syslog-e63257f2d5ca693f286bbcedf2b23720675b7f73",
+              "urls": [
+                "https://github.com/fujitatomoya/rcl_logging_syslog/archive/e63257f2d5ca693f286bbcedf2b23720675b7f73.zip"
+              ]
+            }
+          },
+          "rules_ros2_config_clang": {
+            "repoRuleId": "@@com_github_mvukov_rules_ros2+//repositories:clang_configure.bzl%clang_configure",
+            "attributes": {}
+          }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "com_github_mvukov_rules_ros2+",
+            "bazel_tools",
+            "bazel_tools"
+          ],
+          [
+            "com_github_mvukov_rules_ros2+",
+            "com_github_mvukov_rules_ros2",
+            "com_github_mvukov_rules_ros2+"
+          ]
+        ]
+      }
+    },
+    "@@glfw-bazel+//third_party:extensions.bzl%glfw_extension": {
+      "general": {
+        "bzlTransitiveDigest": "SgObHP2ZmO2Dh2QQ87P43h3nBQ2RxrQo0LvX+S7VHHo=",
+        "usagesDigest": "Us4AgPYxGN3yxuARR7Y51EhVPjKk9vNieqWUq1HZid8=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "archive_glfw": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@glfw-bazel+//third_party/glfw:BUILD.bazel",
+              "strip_prefix": "glfw-3.4",
+              "url": "https://github.com/glfw/glfw/archive/3.4.tar.gz",
+              "integrity": "sha256-wDjTQgAjTQcfrpNFvEVeSo8vVEq2AVB2XXcE4I89rAE="
+            }
+          }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "glfw-bazel+",
+            "bazel_tools",
+            "bazel_tools"
+          ]
+        ]
+      }
+    },
+    "@@mujoco-bazel+//third_party:extensions.bzl%mujoco_x86_64_extension": {
+      "general": {
+        "bzlTransitiveDigest": "2D3l5x2FTn9OOr6vqTUjb3sOn0geAbJIsI90tk1Az/s=",
+        "usagesDigest": "QyaXh6tioFONEJqlR5SEsVQ31NFd6UWXjyxW6LpvE+k=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "archive_mujoco_x86_64": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file_content": "\npackage(default_visibility = [\"//visibility:public\"])\nhdrs = glob([\"include/mujoco/*.h\"])\ncc_import(\n    name = \"mujoco_lib_import\",\n    hdrs = hdrs,\n    includes = [\"include\"],\n    shared_library = \"lib/libmujoco.so\",\n)\ncc_import(\n    name = \"mujoco_lib_import_3_2_7\",\n    hdrs = hdrs,\n    includes = [\"include\"],\n    shared_library = \"lib/libmujoco.so.3.2.7\",\n)\ncc_library(\n    name = \"mujoco_lib_linux-x86_64\",\n    hdrs = hdrs,\n    includes = [\"include\"],\n    copts = [\"-fPIC\"],\n    deps = [\n        \":mujoco_lib_import\",\n        \":mujoco_lib_import_3_2_7\",\n    ],\n    visibility = [\"//visibility:public\"],\n)\n",
+              "strip_prefix": "mujoco-3.2.7",
+              "url": "https://github.com/google-deepmind/mujoco/releases/download/3.2.7/mujoco-3.2.7-linux-x86_64.tar.gz",
+              "integrity": "sha256-Ugpl+7C3XKxSRcwHUmhAVFwB+qNU8YxiOl5is2Vx7WE="
+            }
+          }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "mujoco-bazel+",
+            "bazel_tools",
+            "bazel_tools"
+          ]
+        ]
+      }
+    },
+    "@@rules_foreign_cc+//foreign_cc:extensions.bzl%tools": {
+      "general": {
+        "bzlTransitiveDigest": "gSYCcLbqaVeGzjJbZ8sbe3m7H3GKhJu9vAWq4fRg1f0=",
+        "usagesDigest": "mqChTKgeSo2+U6Pxt2FXlbg3JnDADJTrRE2okUyeU4g=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "rules_foreign_cc_framework_toolchain_linux": {
+            "repoRuleId": "@@rules_foreign_cc+//foreign_cc/private/framework:toolchain.bzl%framework_toolchain_repository",
+            "attributes": {
+              "commands_src": "@rules_foreign_cc//foreign_cc/private/framework/toolchains:linux_commands.bzl",
+              "exec_compatible_with": [
+                "@platforms//os:linux"
+              ]
+            }
+          },
+          "rules_foreign_cc_framework_toolchain_freebsd": {
+            "repoRuleId": "@@rules_foreign_cc+//foreign_cc/private/framework:toolchain.bzl%framework_toolchain_repository",
+            "attributes": {
+              "commands_src": "@rules_foreign_cc//foreign_cc/private/framework/toolchains:freebsd_commands.bzl",
+              "exec_compatible_with": [
+                "@platforms//os:freebsd"
+              ]
+            }
+          },
+          "rules_foreign_cc_framework_toolchain_windows": {
+            "repoRuleId": "@@rules_foreign_cc+//foreign_cc/private/framework:toolchain.bzl%framework_toolchain_repository",
+            "attributes": {
+              "commands_src": "@rules_foreign_cc//foreign_cc/private/framework/toolchains:windows_commands.bzl",
+              "exec_compatible_with": [
+                "@platforms//os:windows"
+              ]
+            }
+          },
+          "rules_foreign_cc_framework_toolchain_macos": {
+            "repoRuleId": "@@rules_foreign_cc+//foreign_cc/private/framework:toolchain.bzl%framework_toolchain_repository",
+            "attributes": {
+              "commands_src": "@rules_foreign_cc//foreign_cc/private/framework/toolchains:macos_commands.bzl",
+              "exec_compatible_with": [
+                "@platforms//os:macos"
+              ]
+            }
+          },
+          "rules_foreign_cc_framework_toolchains": {
+            "repoRuleId": "@@rules_foreign_cc+//foreign_cc/private/framework:toolchain.bzl%framework_toolchain_repository_hub",
+            "attributes": {}
+          },
+          "cmake_src": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file_content": "filegroup(\n    name = \"all_srcs\",\n    srcs = glob([\"**\"]),\n    visibility = [\"//visibility:public\"],\n)\n",
+              "sha256": "f316b40053466f9a416adf981efda41b160ca859e97f6a484b447ea299ff26aa",
+              "strip_prefix": "cmake-3.23.2",
+              "urls": [
+                "https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2.tar.gz"
+              ],
+              "patches": [
+                "@@rules_foreign_cc+//toolchains:cmake-c++11.patch"
+              ]
+            }
+          },
+          "gnumake_src": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file_content": "filegroup(\n    name = \"all_srcs\",\n    srcs = glob([\"**\"]),\n    visibility = [\"//visibility:public\"],\n)\n",
+              "sha256": "dd16fb1d67bfab79a72f5e8390735c49e3e8e70b4945a15ab1f81ddb78658fb3",
+              "strip_prefix": "make-4.4.1",
+              "urls": [
+                "https://mirror.bazel.build/ftpmirror.gnu.org/gnu/make/make-4.4.1.tar.gz",
+                "http://ftpmirror.gnu.org/gnu/make/make-4.4.1.tar.gz"
+              ]
+            }
+          },
+          "ninja_build_src": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file_content": "filegroup(\n    name = \"all_srcs\",\n    srcs = glob([\"**\"]),\n    visibility = [\"//visibility:public\"],\n)\n",
+              "integrity": "sha256-ghvf9Io/aDvEuztvC1/nstZHz2XVKutjMoyRpsbfKFo=",
+              "strip_prefix": "ninja-1.12.1",
+              "urls": [
+                "https://mirror.bazel.build/github.com/ninja-build/ninja/archive/v1.12.1.tar.gz",
+                "https://github.com/ninja-build/ninja/archive/v1.12.1.tar.gz"
+              ]
+            }
+          },
+          "meson_src": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file_content": "exports_files([\"meson.py\"])\n\nfilegroup(\n    name = \"runtime\",\n    srcs = glob([\"mesonbuild/**\"]),\n    visibility = [\"//visibility:public\"],\n)\n",
+              "sha256": "567e533adf255de73a2de35049b99923caf872a455af9ce03e01077e0d384bed",
+              "strip_prefix": "meson-1.5.1",
+              "urls": [
+                "https://mirror.bazel.build/github.com/mesonbuild/meson/releases/download/1.5.1/meson-1.5.1.tar.gz",
+                "https://github.com/mesonbuild/meson/releases/download/1.5.1/meson-1.5.1.tar.gz"
+              ]
+            }
+          },
+          "glib_dev": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file_content": "\ncc_import(\n    name = \"glib_dev\",\n    hdrs = glob([\"include/**\"]),\n    shared_library = \"@glib_runtime//:bin/libglib-2.0-0.dll\",\n    visibility = [\"//visibility:public\"],\n)\n        ",
+              "sha256": "bdf18506df304d38be98a4b3f18055b8b8cca81beabecad0eece6ce95319c369",
+              "urls": [
+                "https://mirror.bazel.build/download.gnome.org/binaries/win64/glib/2.26/glib-dev_2.26.1-1_win64.zip",
+                "https://download.gnome.org/binaries/win64/glib/2.26/glib-dev_2.26.1-1_win64.zip"
+              ]
+            }
+          },
+          "glib_src": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file_content": "\ncc_import(\n    name = \"msvc_hdr\",\n    hdrs = [\"msvc_recommended_pragmas.h\"],\n    visibility = [\"//visibility:public\"],\n)\n        ",
+              "sha256": "bc96f63112823b7d6c9f06572d2ad626ddac7eb452c04d762592197f6e07898e",
+              "strip_prefix": "glib-2.26.1",
+              "urls": [
+                "https://mirror.bazel.build/download.gnome.org/sources/glib/2.26/glib-2.26.1.tar.gz",
+                "https://download.gnome.org/sources/glib/2.26/glib-2.26.1.tar.gz"
+              ]
+            }
+          },
+          "glib_runtime": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file_content": "\nexports_files(\n    [\n        \"bin/libgio-2.0-0.dll\",\n        \"bin/libglib-2.0-0.dll\",\n        \"bin/libgmodule-2.0-0.dll\",\n        \"bin/libgobject-2.0-0.dll\",\n        \"bin/libgthread-2.0-0.dll\",\n    ],\n    visibility = [\"//visibility:public\"],\n)\n        ",
+              "sha256": "88d857087e86f16a9be651ee7021880b3f7ba050d34a1ed9f06113b8799cb973",
+              "urls": [
+                "https://mirror.bazel.build/download.gnome.org/binaries/win64/glib/2.26/glib_2.26.1-1_win64.zip",
+                "https://download.gnome.org/binaries/win64/glib/2.26/glib_2.26.1-1_win64.zip"
+              ]
+            }
+          },
+          "gettext_runtime": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file_content": "\ncc_import(\n    name = \"gettext_runtime\",\n    shared_library = \"bin/libintl-8.dll\",\n    visibility = [\"//visibility:public\"],\n)\n        ",
+              "sha256": "1f4269c0e021076d60a54e98da6f978a3195013f6de21674ba0edbc339c5b079",
+              "urls": [
+                "https://mirror.bazel.build/download.gnome.org/binaries/win64/dependencies/gettext-runtime_0.18.1.1-2_win64.zip",
+                "https://download.gnome.org/binaries/win64/dependencies/gettext-runtime_0.18.1.1-2_win64.zip"
+              ]
+            }
+          },
+          "pkgconfig_src": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file_content": "filegroup(\n    name = \"all_srcs\",\n    srcs = glob([\"**\"]),\n    visibility = [\"//visibility:public\"],\n)\n",
+              "sha256": "6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591",
+              "strip_prefix": "pkg-config-0.29.2",
+              "patches": [
+                "@@rules_foreign_cc+//toolchains:pkgconfig-detectenv.patch",
+                "@@rules_foreign_cc+//toolchains:pkgconfig-makefile-vc.patch",
+                "@@rules_foreign_cc+//toolchains:pkgconfig-builtin-glib-int-conversion.patch"
+              ],
+              "urls": [
+                "https://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz",
+                "https://mirror.bazel.build/pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz"
+              ]
+            }
+          },
+          "bazel_features": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "sha256": "ba1282c1aa1d1fffdcf994ab32131d7c7551a9bc960fbf05f42d55a1b930cbfb",
+              "strip_prefix": "bazel_features-1.15.0",
+              "url": "https://github.com/bazel-contrib/bazel_features/releases/download/v1.15.0/bazel_features-v1.15.0.tar.gz"
+            }
+          },
+          "bazel_skylib": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "urls": [
+                "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.2.1/bazel-skylib-1.2.1.tar.gz",
+                "https://github.com/bazelbuild/bazel-skylib/releases/download/1.2.1/bazel-skylib-1.2.1.tar.gz"
+              ],
+              "sha256": "f7be3474d42aae265405a592bb7da8e171919d74c16f082a5457840f06054728"
+            }
+          },
+          "rules_python": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "sha256": "84aec9e21cc56fbc7f1335035a71c850d1b9b5cc6ff497306f84cced9a769841",
+              "strip_prefix": "rules_python-0.23.1",
+              "url": "https://github.com/bazelbuild/rules_python/archive/refs/tags/0.23.1.tar.gz"
+            }
+          },
+          "rules_shell": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "sha256": "d8cd4a3a91fc1dc68d4c7d6b655f09def109f7186437e3f50a9b60ab436a0c53",
+              "strip_prefix": "rules_shell-0.3.0",
+              "url": "https://github.com/bazelbuild/rules_shell/releases/download/v0.3.0/rules_shell-v0.3.0.tar.gz"
+            }
+          },
+          "cmake-3.23.2-linux-aarch64": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "urls": [
+                "https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2-linux-aarch64.tar.gz"
+              ],
+              "sha256": "f2654bf780b53f170bbbec44d8ac67d401d24788e590faa53036a89476efa91e",
+              "strip_prefix": "cmake-3.23.2-linux-aarch64",
+              "build_file_content": "load(\"@rules_foreign_cc//toolchains/native_tools:native_tools_toolchain.bzl\", \"native_tool_toolchain\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nfilegroup(\n    name = \"cmake_bin\",\n    srcs = [\"bin/cmake\"],\n)\n\nfilegroup(\n    name = \"cmake_data\",\n    srcs = glob(\n        [\n            \"**\",\n        ],\n        exclude = [\n            \"WORKSPACE\",\n            \"WORKSPACE.bazel\",\n            \"BUILD\",\n            \"BUILD.bazel\",\n            \"**/* *\",\n        ],\n    ),\n)\n\nnative_tool_toolchain(\n    name = \"cmake_tool\",\n    path = \"bin/cmake\",\n    target = \":cmake_data\",\n    env = {\"CMAKE\": \"$(execpath :cmake_bin)\"},\n    tools = [\":cmake_bin\"],\n)\n"
+            }
+          },
+          "cmake-3.23.2-linux-x86_64": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "urls": [
+                "https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2-linux-x86_64.tar.gz"
+              ],
+              "sha256": "aaced6f745b86ce853661a595bdac6c5314a60f8181b6912a0a4920acfa32708",
+              "strip_prefix": "cmake-3.23.2-linux-x86_64",
+              "build_file_content": "load(\"@rules_foreign_cc//toolchains/native_tools:native_tools_toolchain.bzl\", \"native_tool_toolchain\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nfilegroup(\n    name = \"cmake_bin\",\n    srcs = [\"bin/cmake\"],\n)\n\nfilegroup(\n    name = \"cmake_data\",\n    srcs = glob(\n        [\n            \"**\",\n        ],\n        exclude = [\n            \"WORKSPACE\",\n            \"WORKSPACE.bazel\",\n            \"BUILD\",\n            \"BUILD.bazel\",\n            \"**/* *\",\n        ],\n    ),\n)\n\nnative_tool_toolchain(\n    name = \"cmake_tool\",\n    path = \"bin/cmake\",\n    target = \":cmake_data\",\n    env = {\"CMAKE\": \"$(execpath :cmake_bin)\"},\n    tools = [\":cmake_bin\"],\n)\n"
+            }
+          },
+          "cmake-3.23.2-macos-universal": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "urls": [
+                "https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2-macos-universal.tar.gz"
+              ],
+              "sha256": "853a0f9af148c5ef47282ffffee06c4c9f257be2635936755f39ca13c3286c88",
+              "strip_prefix": "cmake-3.23.2-macos-universal/CMake.app/Contents",
+              "build_file_content": "load(\"@rules_foreign_cc//toolchains/native_tools:native_tools_toolchain.bzl\", \"native_tool_toolchain\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nfilegroup(\n    name = \"cmake_bin\",\n    srcs = [\"bin/cmake\"],\n)\n\nfilegroup(\n    name = \"cmake_data\",\n    srcs = glob(\n        [\n            \"**\",\n        ],\n        exclude = [\n            \"WORKSPACE\",\n            \"WORKSPACE.bazel\",\n            \"BUILD\",\n            \"BUILD.bazel\",\n            \"**/* *\",\n        ],\n    ),\n)\n\nnative_tool_toolchain(\n    name = \"cmake_tool\",\n    path = \"bin/cmake\",\n    target = \":cmake_data\",\n    env = {\"CMAKE\": \"$(execpath :cmake_bin)\"},\n    tools = [\":cmake_bin\"],\n)\n"
+            }
+          },
+          "cmake-3.23.2-windows-i386": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "urls": [
+                "https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2-windows-i386.zip"
+              ],
+              "sha256": "6a4fcd6a2315b93cb23c93507efccacc30c449c2bf98f14d6032bb226c582e07",
+              "strip_prefix": "cmake-3.23.2-windows-i386",
+              "build_file_content": "load(\"@rules_foreign_cc//toolchains/native_tools:native_tools_toolchain.bzl\", \"native_tool_toolchain\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nfilegroup(\n    name = \"cmake_bin\",\n    srcs = [\"bin/cmake.exe\"],\n)\n\nfilegroup(\n    name = \"cmake_data\",\n    srcs = glob(\n        [\n            \"**\",\n        ],\n        exclude = [\n            \"WORKSPACE\",\n            \"WORKSPACE.bazel\",\n            \"BUILD\",\n            \"BUILD.bazel\",\n            \"**/* *\",\n        ],\n    ),\n)\n\nnative_tool_toolchain(\n    name = \"cmake_tool\",\n    path = \"bin/cmake.exe\",\n    target = \":cmake_data\",\n    env = {\"CMAKE\": \"$(execpath :cmake_bin)\"},\n    tools = [\":cmake_bin\"],\n)\n"
+            }
+          },
+          "cmake-3.23.2-windows-x86_64": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "urls": [
+                "https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2-windows-x86_64.zip"
+              ],
+              "sha256": "2329387f3166b84c25091c86389fb891193967740c9bcf01e7f6d3306f7ffda0",
+              "strip_prefix": "cmake-3.23.2-windows-x86_64",
+              "build_file_content": "load(\"@rules_foreign_cc//toolchains/native_tools:native_tools_toolchain.bzl\", \"native_tool_toolchain\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nfilegroup(\n    name = \"cmake_bin\",\n    srcs = [\"bin/cmake.exe\"],\n)\n\nfilegroup(\n    name = \"cmake_data\",\n    srcs = glob(\n        [\n            \"**\",\n        ],\n        exclude = [\n            \"WORKSPACE\",\n            \"WORKSPACE.bazel\",\n            \"BUILD\",\n            \"BUILD.bazel\",\n            \"**/* *\",\n        ],\n    ),\n)\n\nnative_tool_toolchain(\n    name = \"cmake_tool\",\n    path = \"bin/cmake.exe\",\n    target = \":cmake_data\",\n    env = {\"CMAKE\": \"$(execpath :cmake_bin)\"},\n    tools = [\":cmake_bin\"],\n)\n"
+            }
+          },
+          "cmake_3.23.2_toolchains": {
+            "repoRuleId": "@@rules_foreign_cc+//toolchains:prebuilt_toolchains_repository.bzl%prebuilt_toolchains_repository",
+            "attributes": {
+              "repos": {
+                "cmake-3.23.2-linux-aarch64": [
+                  "@platforms//cpu:aarch64",
+                  "@platforms//os:linux"
+                ],
+                "cmake-3.23.2-linux-x86_64": [
+                  "@platforms//cpu:x86_64",
+                  "@platforms//os:linux"
+                ],
+                "cmake-3.23.2-macos-universal": [
+                  "@platforms//os:macos"
+                ],
+                "cmake-3.23.2-windows-i386": [
+                  "@platforms//cpu:x86_32",
+                  "@platforms//os:windows"
+                ],
+                "cmake-3.23.2-windows-x86_64": [
+                  "@platforms//cpu:x86_64",
+                  "@platforms//os:windows"
+                ]
+              },
+              "tool": "cmake"
+            }
+          },
+          "ninja_1.12.1_linux": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "urls": [
+                "https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-linux.zip"
+              ],
+              "sha256": "6f98805688d19672bd699fbbfa2c2cf0fc054ac3df1f0e6a47664d963d530255",
+              "strip_prefix": "",
+              "build_file_content": "load(\"@rules_foreign_cc//toolchains/native_tools:native_tools_toolchain.bzl\", \"native_tool_toolchain\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nfilegroup(\n    name = \"ninja_bin\",\n    srcs = [\"ninja\"],\n)\n\nnative_tool_toolchain(\n    name = \"ninja_tool\",\n    env = {\"NINJA\": \"$(execpath :ninja_bin)\"},\n    path = \"$(execpath :ninja_bin)\",\n    target = \":ninja_bin\",\n)\n"
+            }
+          },
+          "ninja_1.12.1_linux-aarch64": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "urls": [
+                "https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-linux-aarch64.zip"
+              ],
+              "sha256": "5c25c6570b0155e95fce5918cb95f1ad9870df5768653afe128db822301a05a1",
+              "strip_prefix": "",
+              "build_file_content": "load(\"@rules_foreign_cc//toolchains/native_tools:native_tools_toolchain.bzl\", \"native_tool_toolchain\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nfilegroup(\n    name = \"ninja_bin\",\n    srcs = [\"ninja\"],\n)\n\nnative_tool_toolchain(\n    name = \"ninja_tool\",\n    env = {\"NINJA\": \"$(execpath :ninja_bin)\"},\n    path = \"$(execpath :ninja_bin)\",\n    target = \":ninja_bin\",\n)\n"
+            }
+          },
+          "ninja_1.12.1_mac": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "urls": [
+                "https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-mac.zip"
+              ],
+              "sha256": "89a287444b5b3e98f88a945afa50ce937b8ffd1dcc59c555ad9b1baf855298c9",
+              "strip_prefix": "",
+              "build_file_content": "load(\"@rules_foreign_cc//toolchains/native_tools:native_tools_toolchain.bzl\", \"native_tool_toolchain\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nfilegroup(\n    name = \"ninja_bin\",\n    srcs = [\"ninja\"],\n)\n\nnative_tool_toolchain(\n    name = \"ninja_tool\",\n    env = {\"NINJA\": \"$(execpath :ninja_bin)\"},\n    path = \"$(execpath :ninja_bin)\",\n    target = \":ninja_bin\",\n)\n"
+            }
+          },
+          "ninja_1.12.1_mac_aarch64": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "urls": [
+                "https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-mac.zip"
+              ],
+              "sha256": "89a287444b5b3e98f88a945afa50ce937b8ffd1dcc59c555ad9b1baf855298c9",
+              "strip_prefix": "",
+              "build_file_content": "load(\"@rules_foreign_cc//toolchains/native_tools:native_tools_toolchain.bzl\", \"native_tool_toolchain\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nfilegroup(\n    name = \"ninja_bin\",\n    srcs = [\"ninja\"],\n)\n\nnative_tool_toolchain(\n    name = \"ninja_tool\",\n    env = {\"NINJA\": \"$(execpath :ninja_bin)\"},\n    path = \"$(execpath :ninja_bin)\",\n    target = \":ninja_bin\",\n)\n"
+            }
+          },
+          "ninja_1.12.1_win": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "urls": [
+                "https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-win.zip"
+              ],
+              "sha256": "f550fec705b6d6ff58f2db3c374c2277a37691678d6aba463adcbb129108467a",
+              "strip_prefix": "",
+              "build_file_content": "load(\"@rules_foreign_cc//toolchains/native_tools:native_tools_toolchain.bzl\", \"native_tool_toolchain\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nfilegroup(\n    name = \"ninja_bin\",\n    srcs = [\"ninja.exe\"],\n)\n\nnative_tool_toolchain(\n    name = \"ninja_tool\",\n    env = {\"NINJA\": \"$(execpath :ninja_bin)\"},\n    path = \"$(execpath :ninja_bin)\",\n    target = \":ninja_bin\",\n)\n"
+            }
+          },
+          "ninja_1.12.1_toolchains": {
+            "repoRuleId": "@@rules_foreign_cc+//toolchains:prebuilt_toolchains_repository.bzl%prebuilt_toolchains_repository",
+            "attributes": {
+              "repos": {
+                "ninja_1.12.1_linux": [
+                  "@platforms//cpu:x86_64",
+                  "@platforms//os:linux"
+                ],
+                "ninja_1.12.1_linux-aarch64": [
+                  "@platforms//cpu:aarch64",
+                  "@platforms//os:linux"
+                ],
+                "ninja_1.12.1_mac": [
+                  "@platforms//cpu:x86_64",
+                  "@platforms//os:macos"
+                ],
+                "ninja_1.12.1_mac_aarch64": [
+                  "@platforms//cpu:aarch64",
+                  "@platforms//os:macos"
+                ],
+                "ninja_1.12.1_win": [
+                  "@platforms//cpu:x86_64",
+                  "@platforms//os:windows"
+                ]
+              },
+              "tool": "ninja"
+            }
+          }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "rules_foreign_cc+",
+            "bazel_tools",
+            "bazel_tools"
+          ],
+          [
+            "rules_foreign_cc+",
+            "rules_foreign_cc",
+            "rules_foreign_cc+"
+          ]
+        ]
+      }
+    },
+    "@@rules_kotlin+//src/main/starlark/core/repositories:bzlmod_setup.bzl%rules_kotlin_extensions": {
+      "general": {
+        "bzlTransitiveDigest": "sFhcgPbDQehmbD1EOXzX4H1q/CD5df8zwG4kp4jbvr8=",
+        "usagesDigest": "QI2z8ZUR+mqtbwsf2fLqYdJAkPOHdOV+tF2yVAUgRzw=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "com_github_jetbrains_kotlin_git": {
+            "repoRuleId": "@@rules_kotlin+//src/main/starlark/core/repositories:compiler.bzl%kotlin_compiler_git_repository",
+            "attributes": {
+              "urls": [
+                "https://github.com/JetBrains/kotlin/releases/download/v1.9.23/kotlin-compiler-1.9.23.zip"
+              ],
+              "sha256": "93137d3aab9afa9b27cb06a824c2324195c6b6f6179d8a8653f440f5bd58be88"
+            }
+          },
+          "com_github_jetbrains_kotlin": {
+            "repoRuleId": "@@rules_kotlin+//src/main/starlark/core/repositories:compiler.bzl%kotlin_capabilities_repository",
+            "attributes": {
+              "git_repository_name": "com_github_jetbrains_kotlin_git",
+              "compiler_version": "1.9.23"
+            }
+          },
+          "com_github_google_ksp": {
+            "repoRuleId": "@@rules_kotlin+//src/main/starlark/core/repositories:ksp.bzl%ksp_compiler_plugin_repository",
+            "attributes": {
+              "urls": [
+                "https://github.com/google/ksp/releases/download/1.9.23-1.0.20/artifacts.zip"
+              ],
+              "sha256": "ee0618755913ef7fd6511288a232e8fad24838b9af6ea73972a76e81053c8c2d",
+              "strip_version": "1.9.23-1.0.20"
+            }
+          },
+          "com_github_pinterest_ktlint": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
+            "attributes": {
+              "sha256": "01b2e0ef893383a50dbeb13970fe7fa3be36ca3e83259e01649945b09d736985",
+              "urls": [
+                "https://github.com/pinterest/ktlint/releases/download/1.3.0/ktlint"
+              ],
+              "executable": true
+            }
+          },
+          "rules_android": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "sha256": "cd06d15dd8bb59926e4d65f9003bfc20f9da4b2519985c27e190cddc8b7a7806",
+              "strip_prefix": "rules_android-0.1.1",
+              "urls": [
+                "https://github.com/bazelbuild/rules_android/archive/v0.1.1.zip"
+              ]
+            }
+          }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "rules_kotlin+",
+            "bazel_tools",
+            "bazel_tools"
+          ]
+        ]
+      }
+    },
+    "@@rules_python+//python/uv:uv.bzl%uv": {
+      "general": {
+        "bzlTransitiveDigest": "Xpqjnjzy6zZ90Es9Wa888ZLHhn7IsNGbph/e6qoxzw8=",
+        "usagesDigest": "4JapxcpS0mL3524k0TZJffAtVyuRjDHZvN9kBRxxF1U=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "uv": {
+            "repoRuleId": "@@rules_python+//python/uv/private:uv_toolchains_repo.bzl%uv_toolchains_repo",
+            "attributes": {
+              "toolchain_type": "'@@rules_python+//python/uv:uv_toolchain_type'",
+              "toolchain_names": [
+                "none"
+              ],
+              "toolchain_implementations": {
+                "none": "'@@rules_python+//python:none'"
+              },
+              "toolchain_compatible_with": {
+                "none": [
+                  "@platforms//:incompatible"
+                ]
+              },
+              "toolchain_target_settings": {}
+            }
+          }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "rules_python+",
+            "platforms",
+            "platforms"
+          ]
+        ]
+      }
+    }
+  }
 }
