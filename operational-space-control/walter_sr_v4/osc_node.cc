@@ -1128,9 +1128,9 @@ void OSCNode::timer_callback() {
                 double fx = solution_(optimization::z_idx + 3 * w + 0);
                 double fy = solution_(optimization::z_idx + 3 * w + 1);
                 double fz = solution_(optimization::z_idx + 3 * w + 2);
-                tau_Jc_xy -= osc_data_.contact_jacobian(3 * w + 0, dof) * fx;
-                tau_Jc_xy -= osc_data_.contact_jacobian(3 * w + 1, dof) * fy;
-                tau_Jc_z  -= osc_data_.contact_jacobian(3 * w + 2, dof) * fz;
+                tau_Jc_xy -= osc_data_.contact_jacobian(dof, 3 * w + 0) * fx;
+                tau_Jc_xy -= osc_data_.contact_jacobian(dof, 3 * w + 1) * fy;
+                tau_Jc_z  -= osc_data_.contact_jacobian(dof, 3 * w + 2) * fz;
             }
             std::string sfx = lnames[k];
             mat_logger.add("M_kk_"        + sfx, m_kk);
