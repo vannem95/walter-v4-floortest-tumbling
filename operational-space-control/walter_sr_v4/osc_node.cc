@@ -990,6 +990,165 @@ void OSCNode::timer_callback() {
         }        
         
 
+
+
+
+        // ==============================================================================
+        // STRUCTURED BINARY LOGGER + AUTOMATIC ROS 2 data_msg_ MIRRORING
+        // ==============================================================================
+        static MatLogger mat_logger;
+        mat_logger.begin_tick(&data_msg_.data); // Clears data_msg_.data & mirrors cols 1..126
+
+        // 1. Hip Z Positions & Velocities (Cols 1..10)
+        mat_logger.add("target_hip_z", target_hip_z);
+        mat_logger.add_legs("hip_z", hip_z_tl, hip_z_tr, hip_z_hl, hip_z_hr);
+        mat_logger.add("target_hip_z_vel", target_hip_z_vel);
+        mat_logger.add_legs("hip_zv", hip_zv_tl, hip_zv_tr, hip_zv_hl, hip_zv_hr);
+
+        // 2. Shin Tumbling Positions & Velocities (Cols 11..23)
+        mat_logger.add_legs("shin_pos_target", shin_pos_tl_target, shin_pos_tr_target, shin_pos_hl_target, shin_pos_hr_target);
+        mat_logger.add_legs("shin_pos", shin_pos_tl, shin_pos_tr, shin_pos_hl, shin_pos_hr);
+        mat_logger.add("shin_vel_target", shin_vel_target);
+        mat_logger.add_legs("shin_vel", shin_vel_tl, shin_vel_tr, shin_vel_hl, shin_vel_hr);
+
+        // 3. Body Position & Contact Mask (Cols 24..34)
+        mat_logger.add("body_x", mj_data_->qpos[0]);
+        mat_logger.add("body_y", mj_data_->qpos[1]);
+        mat_logger.add("body_z", mj_data_->qpos[2]);
+        mat_logger.add_wheels8("contact_mask", local_state.contact_mask);
+
+        // 4. Solver Health & Objective (Cols 35..38)
+        mat_logger.add("exit_code", static_cast<double>(exit_code_));
+        mat_logger.add("time_casadi_ms", time_casadi_update_ms_);
+        mat_logger.add("time_osqp_ms", time_osqp_solve_ms_);
+        double quadratic_term = 0.5 * solution_.transpose() * opt_data_.H * solution_;
+        double linear_term = opt_data_.f.transpose() * solution_;
+        mat_logger.add("qp_objective", quadratic_term + linear_term);
+
+        // 5. QP Commanded Torques & Predicted Normal Forces Fz (Cols 39..54)
+        Vector<model::nu_size> osc_torque = solution_(Eigen::seqN(optimization::u_idx, optimization::u_size));
+        mat_logger.add_joints8("tau_cmd", osc_torque);
+
+        static const char* wnames[8] = {"tlf", "tlr", "trf", "trr", "hlf", "hlr", "hrf", "hrr"};
+        for (int i = 0; i < model::contact_site_ids_size; ++i) {
+            mat_logger.add(std::string("fz_qp_") + wnames[i], solution_(optimization::z_idx + (3 * i) + 2));
+        }
+
+        // 6. X/Y Velocity Diagnostics (Cols 55..58)
+        mat_logger.add("global_vx", mj_data_->qvel[0]);
+        mat_logger.add("global_vy", mj_data_->qvel[1]);
+        mat_logger.add("tl_x_tgt", taskspace_targets_.row(5)(0));
+        mat_logger.add("tl_y_tgt", taskspace_targets_.row(5)(1));
+
+        // 7. Shin Acceleration Triad (Cols 59..70)
+        mat_logger.add("shin_pd_acc_tl", tl_ddq_cmd);
+        mat_logger.add("shin_qp_ddq_tl", solution_(7));
+        mat_logger.add("shin_sens_acc_tl", sensed_acc_tl);
+
+        mat_logger.add("shin_pd_acc_tr", tr_ddq_cmd);
+        mat_logger.add("shin_qp_ddq_tr", solution_(9));
+        mat_logger.add("shin_sens_acc_tr", sensed_acc_tr);
+
+        mat_logger.add("shin_pd_acc_hl", hl_ddq_cmd);
+        mat_logger.add("shin_qp_ddq_hl", solution_(11));
+        mat_logger.add("shin_sens_acc_hl", sensed_acc_hl);
+
+        mat_logger.add("shin_pd_acc_hr", hr_ddq_cmd);
+        mat_logger.add("shin_qp_ddq_hr", solution_(13));
+        mat_logger.add("shin_sens_acc_hr", sensed_acc_hr);
+
+        // 8. Hip Z Triad, World Shin Ry Task, World Hip Site Z, Torque Est (Cols 71..98)
+        Vector<model::nv_size> ddq_qp = solution_(Eigen::seqN(optimization::dv_idx, model::nv_size));
+        auto task_acc = [&](int row) {
+            return osc_data_.taskspace_jacobian.row(row).dot(ddq_qp) + osc_data_.taskspace_bias(row);
+        };
+        mat_logger.add_legs("hip_z_cmd", tl_hip_z_ddq_cmd, tr_hip_z_ddq_cmd, hl_hip_z_ddq_cmd, hr_hip_z_ddq_cmd);
+        mat_logger.add_legs("hip_z_qp",  task_acc(3*(5+0)+2), task_acc(3*(5+1)+2), task_acc(3*(5+2)+2), task_acc(3*(5+3)+2));
+        mat_logger.add_legs("hip_z_sens", sensed_hip_z_acc[0], sensed_hip_z_acc[1], sensed_hip_z_acc[2], sensed_hip_z_acc[3]);
+        mat_logger.add_legs("shin_ry_qp",
+            task_acc(optimization::p_size + 3*(1+0) + 1),
+            task_acc(optimization::p_size + 3*(1+1) + 1),
+            task_acc(optimization::p_size + 3*(1+2) + 1),
+            task_acc(optimization::p_size + 3*(1+3) + 1));
+        mat_logger.add_legs("hip_site_zw",
+            mj_data_->site_xpos[3 * site_ids_[5 + 0] + 2],
+            mj_data_->site_xpos[3 * site_ids_[5 + 1] + 2],
+            mj_data_->site_xpos[3 * site_ids_[5 + 2] + 2],
+            mj_data_->site_xpos[3 * site_ids_[5 + 3] + 2]);
+        mat_logger.add_joints8("tq_est", local_state.torque_estimate);
+
+        // 9. Knee qfrc_bias (Cols 99..102)
+        mat_logger.add_legs("qfrc_bias_knee",
+            osc_data_.coriolis_matrix(6 + 1),
+            osc_data_.coriolis_matrix(6 + 3),
+            osc_data_.coriolis_matrix(6 + 5),
+            osc_data_.coriolis_matrix(6 + 7));
+
+        // 10. Grounded Wheel Site 3D Accelerations (Cols 103..126)
+        for (int i = 0; i < 8; ++i) {
+            int r = 3 * (9 + i);
+            Eigen::Vector3d a = osc_data_.taskspace_jacobian.middleRows(r, 3) * ddq_qp
+                              + osc_data_.taskspace_bias.segment(r, 3);
+            mat_logger.add(std::string("wheel_acc_x_") + wnames[i], a.x());
+            mat_logger.add(std::string("wheel_acc_y_") + wnames[i], a.y());
+            mat_logger.add(std::string("wheel_acc_z_") + wnames[i], a.z());
+        }
+
+        // ==============================================================================
+        // 11. NEW: COMPLETE MANIPULATOR EQUATION BREAKDOWN + STATE SNAPSHOT
+        //     (Logged to binary file + appended to data_msg_)
+        // ==============================================================================
+        // Log Body Quaternion & Joint Positions/Velocities so MATLAB never needs interp1!
+        mat_logger.add("quat_w", mj_data_->qpos[3]);
+        mat_logger.add("quat_x", mj_data_->qpos[4]);
+        mat_logger.add("quat_y", mj_data_->qpos[5]);
+        mat_logger.add("quat_z", mj_data_->qpos[6]);
+        for (int i = 0; i < 8; ++i) mat_logger.add(std::string("q_osc_")  + (i%2==0?"h_":"k_") + std::to_string(i), mj_data_->qpos[7 + i]);
+        for (int i = 0; i < 8; ++i) mat_logger.add(std::string("dq_osc_") + (i%2==0?"h_":"k_") + std::to_string(i), mj_data_->qvel[6 + i]);
+
+        // Log Tangential Contact Forces (Fx, Fy) solved by QP
+        for (int i = 0; i < model::contact_site_ids_size; ++i) {
+            mat_logger.add(std::string("fx_qp_") + wnames[i], solution_(optimization::z_idx + (3 * i) + 0));
+            mat_logger.add(std::string("fy_qp_") + wnames[i], solution_(optimization::z_idx + (3 * i) + 1));
+        }
+
+        // Exact Knee Manipulator Equation Row Breakdown:
+        // tau_cmd(k) = M(k,k)*ddq(k) + sum_{j!=k} M(k,j)*ddq(j) + qfrc_bias(k) - Jc_z^T*Fz - Jc_xy^T*Fxy
+        static const char* lnames[4] = {"tl", "tr", "hl", "hr"};
+        const int knee_dofs[4] = {7, 9, 11, 13};
+        for (int k = 0; k < 4; ++k) {
+            int dof = knee_dofs[k];
+            double m_kk        = osc_data_.mass_matrix(dof, dof);
+            double tau_M_diag  = m_kk * ddq_qp(dof);
+            double tau_M_coupl = osc_data_.mass_matrix.row(dof).dot(ddq_qp) - tau_M_diag;
+
+            double tau_Jc_z  = 0.0;
+            double tau_Jc_xy = 0.0;
+            for (int w = 0; w < model::contact_site_ids_size; ++w) {
+                double fx = solution_(optimization::z_idx + 3 * w + 0);
+                double fy = solution_(optimization::z_idx + 3 * w + 1);
+                double fz = solution_(optimization::z_idx + 3 * w + 2);
+                tau_Jc_xy -= osc_data_.contact_jacobian(3 * w + 0, dof) * fx;
+                tau_Jc_xy -= osc_data_.contact_jacobian(3 * w + 1, dof) * fy;
+                tau_Jc_z  -= osc_data_.contact_jacobian(3 * w + 2, dof) * fz;
+            }
+            std::string sfx = lnames[k];
+            mat_logger.add("M_kk_"        + sfx, m_kk);
+            mat_logger.add("tau_M_diag_"  + sfx, tau_M_diag);
+            mat_logger.add("tau_M_coupl_" + sfx, tau_M_coupl);
+            mat_logger.add("tau_Jc_z_"    + sfx, tau_Jc_z);
+            mat_logger.add("tau_Jc_xy_"   + sfx, tau_Jc_xy);
+        }
+
+        mat_logger.end_tick();
+
+
+
+
+
+
+
+
     }
 
     if (!local_safety_override_active) {
