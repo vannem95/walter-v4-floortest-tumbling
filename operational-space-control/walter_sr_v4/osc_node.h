@@ -43,6 +43,7 @@
 #include "operational-space-control/walter_sr_v4/constants.h"
 #include "operational-space-control/walter_sr_v4/containers.h"
 
+#include "mat_logger.h"
 
 using namespace operational_space_controller::constants;
 using namespace operational_space_controller::containers;
