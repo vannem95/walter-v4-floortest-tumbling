@@ -42,7 +42,9 @@ ros2_cpp_library(
     srcs = [
         "osc_node.cc",
     ],
-    hdrs = ["osc_node.h"],
+    hdrs = ["osc_node.h",
+            "mat_logger.h",  # <--- ADD THIS LINE HERE],
+    ],
     deps = [
         ":aliases",
         ":constants",
