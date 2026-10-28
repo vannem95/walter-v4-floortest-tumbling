@@ -1021,12 +1021,12 @@ void OSCNode::timer_callback() {
         mat_logger.add("exit_code", static_cast<double>(exit_code_));
         mat_logger.add("time_casadi_ms", time_casadi_update_ms_);
         mat_logger.add("time_osqp_ms", time_osqp_solve_ms_);
-        double quadratic_term = 0.5 * solution_.transpose() * opt_data_.H * solution_;
-        double linear_term = opt_data_.f.transpose() * solution_;
+        // double quadratic_term = 0.5 * solution_.transpose() * opt_data_.H * solution_;
+        // double linear_term = opt_data_.f.transpose() * solution_;
         mat_logger.add("qp_objective", quadratic_term + linear_term);
 
         // 5. QP Commanded Torques & Predicted Normal Forces Fz (Cols 39..54)
-        Vector<model::nu_size> osc_torque = solution_(Eigen::seqN(optimization::u_idx, optimization::u_size));
+        // Vector<model::nu_size> osc_torque = solution_(Eigen::seqN(optimization::u_idx, optimization::u_size));
         mat_logger.add_joints8("tau_cmd", osc_torque);
 
         static const char* wnames[8] = {"tlf", "tlr", "trf", "trr", "hlf", "hlr", "hrf", "hrr"};
@@ -1059,9 +1059,9 @@ void OSCNode::timer_callback() {
 
         // 8. Hip Z Triad, World Shin Ry Task, World Hip Site Z, Torque Est (Cols 71..98)
         Vector<model::nv_size> ddq_qp = solution_(Eigen::seqN(optimization::dv_idx, model::nv_size));
-        auto task_acc = [&](int row) {
-            return osc_data_.taskspace_jacobian.row(row).dot(ddq_qp) + osc_data_.taskspace_bias(row);
-        };
+        // auto task_acc = [&](int row) {
+        //     return osc_data_.taskspace_jacobian.row(row).dot(ddq_qp) + osc_data_.taskspace_bias(row);
+        // };
         mat_logger.add_legs("hip_z_cmd", tl_hip_z_ddq_cmd, tr_hip_z_ddq_cmd, hl_hip_z_ddq_cmd, hr_hip_z_ddq_cmd);
         mat_logger.add_legs("hip_z_qp",  task_acc(3*(5+0)+2), task_acc(3*(5+1)+2), task_acc(3*(5+2)+2), task_acc(3*(5+3)+2));
         mat_logger.add_legs("hip_z_sens", sensed_hip_z_acc[0], sensed_hip_z_acc[1], sensed_hip_z_acc[2], sensed_hip_z_acc[3]);
@@ -1087,11 +1087,11 @@ void OSCNode::timer_callback() {
         // 10. Grounded Wheel Site 3D Accelerations (Cols 103..126)
         for (int i = 0; i < 8; ++i) {
             int r = 3 * (9 + i);
-            Eigen::Vector3d a = osc_data_.taskspace_jacobian.middleRows(r, 3) * ddq_qp
+            Eigen::Vector3d a2 = osc_data_.taskspace_jacobian.middleRows(r, 3) * ddq_qp
                               + osc_data_.taskspace_bias.segment(r, 3);
-            mat_logger.add(std::string("wheel_acc_x_") + wnames[i], a.x());
-            mat_logger.add(std::string("wheel_acc_y_") + wnames[i], a.y());
-            mat_logger.add(std::string("wheel_acc_z_") + wnames[i], a.z());
+            mat_logger.add(std::string("wheel_acc_x_") + wnames[i], a2.x());
+            mat_logger.add(std::string("wheel_acc_y_") + wnames[i], a2.y());
+            mat_logger.add(std::string("wheel_acc_z_") + wnames[i], a2.z());
         }
 
         // ==============================================================================
