@@ -1058,7 +1058,7 @@ void OSCNode::timer_callback() {
         mat_logger.add("shin_sens_acc_hr", sensed_acc_hr);
 
         // 8. Hip Z Triad, World Shin Ry Task, World Hip Site Z, Torque Est (Cols 71..98)
-        Vector<model::nv_size> ddq_qp = solution_(Eigen::seqN(optimization::dv_idx, model::nv_size));
+        // Vector<model::nv_size> ddq_qp = solution_(Eigen::seqN(optimization::dv_idx, model::nv_size));
         // auto task_acc = [&](int row) {
         //     return osc_data_.taskspace_jacobian.row(row).dot(ddq_qp) + osc_data_.taskspace_bias(row);
         // };
