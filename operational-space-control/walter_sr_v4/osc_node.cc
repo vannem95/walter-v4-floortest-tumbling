@@ -1114,13 +1114,26 @@ void OSCNode::timer_callback() {
 
         // Exact Knee Manipulator Equation Row Breakdown:
         // tau_cmd(k) = M(k,k)*ddq(k) + sum_{j!=k} M(k,j)*ddq(j) + qfrc_bias(k) - Jc_z^T*Fz - Jc_xy^T*Fxy
+        // Compute 14-DOF sensed generalized acceleration (finite difference)
+        static Eigen::Matrix<double, model::nv_size, 1> prev_qvel = Eigen::Matrix<double, model::nv_size, 1>::Zero();
+        static bool have_prev_qvel = false;
+        Eigen::Map<const Eigen::Matrix<double, model::nv_size, 1>> qvel_now(mj_data_->qvel);
+        Eigen::Matrix<double, model::nv_size, 1> qdd_s = Eigen::Matrix<double, model::nv_size, 1>::Zero();
+        if (have_prev_qvel) {
+            qdd_s = (qvel_now - prev_qvel) / 0.005; // dt = 5 ms (200 Hz)
+        }
+        prev_qvel = qvel_now;
+        have_prev_qvel = true;
+
         static const char* lnames[4] = {"tl", "tr", "hl", "hr"};
         const int knee_dofs[4] = {7, 9, 11, 13};
         for (int k = 0; k < 4; ++k) {
             int dof = knee_dofs[k];
-            double m_kk        = osc_data_.mass_matrix(dof, dof);
-            double tau_M_diag  = m_kk * ddq_qp(dof);
-            double tau_M_coupl = osc_data_.mass_matrix.row(dof).dot(ddq_qp) - tau_M_diag;
+            double m_kk          = osc_data_.mass_matrix(dof, dof);
+            double tau_M_diag    = m_kk * ddq_qp(dof);
+            double tau_M_coupl   = osc_data_.mass_matrix.row(dof).dot(ddq_qp) - tau_M_diag;
+            double tau_M_diag_s  = m_kk * qdd_s(dof);
+            double tau_M_coupl_s = osc_data_.mass_matrix.row(dof).dot(qdd_s) - tau_M_diag_s;
 
             double tau_Jc_z  = 0.0;
             double tau_Jc_xy = 0.0;
@@ -1133,18 +1146,16 @@ void OSCNode::timer_callback() {
                 tau_Jc_z  -= osc_data_.contact_jacobian(dof, 3 * w + 2) * fz;
             }
             std::string sfx = lnames[k];
-            mat_logger.add("M_kk_"        + sfx, m_kk);
-            mat_logger.add("tau_M_diag_"  + sfx, tau_M_diag);
-            mat_logger.add("tau_M_coupl_" + sfx, tau_M_coupl);
-            mat_logger.add("tau_Jc_z_"    + sfx, tau_Jc_z);
-            mat_logger.add("tau_Jc_xy_"   + sfx, tau_Jc_xy);
+            mat_logger.add("M_kk_"          + sfx, m_kk);
+            mat_logger.add("tau_M_diag_"    + sfx, tau_M_diag);
+            mat_logger.add("tau_M_coupl_"   + sfx, tau_M_coupl);
+            mat_logger.add("tau_M_diag_s_"  + sfx, tau_M_diag_s);  // NEW: Sensed M_kk * ddq_s
+            mat_logger.add("tau_M_coupl_s_" + sfx, tau_M_coupl_s); // NEW: Sensed sum_{j!=k} M_kj * ddq_s_j
+            mat_logger.add("tau_Jc_z_"      + sfx, tau_Jc_z);
+            mat_logger.add("tau_Jc_xy_"     + sfx, tau_Jc_xy);
         }
 
         mat_logger.end_tick();
-
-
-
-
 
 
 
