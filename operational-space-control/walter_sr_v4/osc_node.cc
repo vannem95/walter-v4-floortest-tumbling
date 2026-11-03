@@ -428,6 +428,21 @@ void OSCNode::timer_callback() {
     double hip_z_hr = get_propeller_leg_height(q_body, local_state.motor_position(6), local_state.motor_position(7), 0, 0, L_THIGH, L_SHIN, R_WHEEL);
 
 
+    // ==============================================================================
+    // --- NEW: Extract Torso Pitch (Ry) & Pitch Angular Velocity Early ---
+    double sinp = 2.0 * (q_body.w() * q_body.y() - q_body.z() * q_body.x());
+    double torso_pitch     = std::asin(std::clamp(sinp, -1.0, 1.0));
+    double torso_pitch_vel = local_state.angular_body_velocity(1); // IMU Wy
+
+    // Compute current Global Shin Positions (phi_shin = theta_torso + q_hip + q_knee)
+    // Hips: indices 0, 2, 4, 6 | Knees: indices 1, 3, 5, 7
+    double global_shin_pos_tl = torso_pitch + local_state.motor_position(0) + local_state.motor_position(1);
+    double global_shin_pos_tr = torso_pitch + local_state.motor_position(2) + local_state.motor_position(3);
+    double global_shin_pos_hl = torso_pitch + local_state.motor_position(4) + local_state.motor_position(5);
+    double global_shin_pos_hr = torso_pitch + local_state.motor_position(6) + local_state.motor_position(7);
+    // ==============================================================================
+
+
     // Zero time step
     if (last_time_ == 0.0) {
         update_mj_data(local_state); // Pass local state
@@ -438,10 +453,17 @@ void OSCNode::timer_callback() {
         hip_z_hl_initial = hip_z_hl;
         hip_z_hr_initial = hip_z_hr;
         gait_start_time = current_time;
-        shin_pos_tl_initial  =  local_state.motor_position(1);
-        shin_pos_tr_initial  =  local_state.motor_position(3);
-        shin_pos_hl_initial  =  local_state.motor_position(5);
-        shin_pos_hr_initial  =  local_state.motor_position(7);
+        // shin_pos_tl_initial  =  local_state.motor_position(1);
+        // shin_pos_tr_initial  =  local_state.motor_position(3);
+        // shin_pos_hl_initial  =  local_state.motor_position(5);
+        // shin_pos_hr_initial  =  local_state.motor_position(7);
+
+        // ==============================================================================
+        shin_pos_tl_initial = global_shin_pos_tl;
+        shin_pos_tr_initial = global_shin_pos_tr;
+        shin_pos_hl_initial = global_shin_pos_hl;
+        shin_pos_hr_initial = global_shin_pos_hr;
+        // ==============================================================================
 
         
         // Build the OSQP matrix
@@ -621,32 +643,6 @@ void OSCNode::timer_callback() {
         auto t_start_kinematics = std::chrono::high_resolution_clock::now();        
         update_mj_data(local_state); 
         
-
-        // ===============================================================
-        // --- THE PENETRATION PROOF: All 8 Wheel Z-Heights ---
-        // ===============================================================
-        // static int id_tlf = mj_name2id(mj_model_, mjOBJ_SITE, "tlf_wheel_site");
-        // static int id_tlr = mj_name2id(mj_model_, mjOBJ_SITE, "tlr_wheel_site");
-        // static int id_trf = mj_name2id(mj_model_, mjOBJ_SITE, "trf_wheel_site");
-        // static int id_trr = mj_name2id(mj_model_, mjOBJ_SITE, "trr_wheel_site");
-        // static int id_hlf = mj_name2id(mj_model_, mjOBJ_SITE, "hlf_wheel_site");
-        // static int id_hlr = mj_name2id(mj_model_, mjOBJ_SITE, "hlr_wheel_site");
-        // static int id_hrf = mj_name2id(mj_model_, mjOBJ_SITE, "hrf_wheel_site");
-        // static int id_hrr = mj_name2id(mj_model_, mjOBJ_SITE, "hrr_wheel_site");
-
-        // double z_tlf = mj_data_->site_xpos[3 * id_tlf + 2];
-        // double z_tlr = mj_data_->site_xpos[3 * id_tlr + 2];
-        // double z_trf = mj_data_->site_xpos[3 * id_trf + 2];
-        // double z_trr = mj_data_->site_xpos[3 * id_trr + 2];
-        // double z_hlf = mj_data_->site_xpos[3 * id_hlf + 2];
-        // double z_hlr = mj_data_->site_xpos[3 * id_hlr + 2];
-        // double z_hrf = mj_data_->site_xpos[3 * id_hrf + 2];
-        // double z_hrr = mj_data_->site_xpos[3 * id_hrr + 2];
-
-        // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 10, 
-        //     "Z-Heights | TL[F: % .4f R: % .4f] TR[F: % .4f R: % .4f] HL[F: % .4f R: % .4f] HR[F: % .4f R: % .4f]", 
-        //     z_tlf, z_tlr, z_trf, z_trr, z_hlf, z_hlr, z_hrf, z_hrr);
-        // ===============================================================     
         
         // ===============================================================
         // Z control targets
@@ -691,26 +687,28 @@ void OSCNode::timer_callback() {
 
 
         // ===============================================================
-        // SHIN VELOCITY AND POSITION TARGET
+        // GLOBAL SHIN VELOCITY AND POSITION TARGET
+        // phi_shin = theta_torso + q_hip + q_knee
+        // dphi_shin = dtheta_torso + dq_hip + dq_knee
         // ===============================================================        
-        double shin_pos_tl  =  local_state.motor_position(1);
-        double shin_pos_tr  =  local_state.motor_position(3);
-        double shin_pos_hl  =  local_state.motor_position(5);
-        double shin_pos_hr  =  local_state.motor_position(7);
+        double shin_pos_tl = global_shin_pos_tl;
+        double shin_pos_tr = global_shin_pos_tr;
+        double shin_pos_hl = global_shin_pos_hl;
+        double shin_pos_hr = global_shin_pos_hr;
 
-        double shin_vel_tl  =  local_state.motor_velocity(1);
-        double shin_vel_tr  =  local_state.motor_velocity(3);
-        double shin_vel_hl  =  local_state.motor_velocity(5);
-        double shin_vel_hr  =  local_state.motor_velocity(7);
-
+        double shin_vel_tl = torso_pitch_vel + local_state.motor_velocity(0) + local_state.motor_velocity(1);
+        double shin_vel_tr = torso_pitch_vel + local_state.motor_velocity(2) + local_state.motor_velocity(3);
+        double shin_vel_hl = torso_pitch_vel + local_state.motor_velocity(4) + local_state.motor_velocity(5);
+        double shin_vel_hr = torso_pitch_vel + local_state.motor_velocity(6) + local_state.motor_velocity(7);
 
         // ===============================================================
-        // --- NEW: MEASURED REAL-WORLD ACCELERATION ---
+        // MEASURED REAL-WORLD GLOBAL SHIN ACCELERATION
+        // d2phi_shin / dt = (dphi_shin_now - dphi_shin_prev) / dt
         // ===============================================================
-        static double last_shin_vel_tl = 0.0;
-        static double last_shin_vel_tr = 0.0;
-        static double last_shin_vel_hl = 0.0;
-        static double last_shin_vel_hr = 0.0;
+        static double last_shin_vel_tl = shin_vel_tl;
+        static double last_shin_vel_tr = shin_vel_tr;
+        static double last_shin_vel_hl = shin_vel_hl;
+        static double last_shin_vel_hr = shin_vel_hr;
 
         double sensed_acc_tl = (shin_vel_tl - last_shin_vel_tl) / dt;
         double sensed_acc_tr = (shin_vel_tr - last_shin_vel_tr) / dt;
@@ -720,8 +718,7 @@ void OSCNode::timer_callback() {
         last_shin_vel_tl = shin_vel_tl;
         last_shin_vel_tr = shin_vel_tr;
         last_shin_vel_hl = shin_vel_hl;
-        last_shin_vel_hr = shin_vel_hr;
-        // ===============================================================        
+        last_shin_vel_hr = shin_vel_hr;        
 
         // ===============================================================        
         // sensed hip z acc
@@ -1120,7 +1117,7 @@ void OSCNode::timer_callback() {
         Eigen::Map<const Eigen::Matrix<double, model::nv_size, 1>> qvel_now(mj_data_->qvel);
         Eigen::Matrix<double, model::nv_size, 1> qdd_s = Eigen::Matrix<double, model::nv_size, 1>::Zero();
         if (have_prev_qvel) {
-            qdd_s = (qvel_now - prev_qvel) / 0.005; // dt = 5 ms (200 Hz)
+            qdd_s = (qvel_now - prev_qvel) / dt; // dt = 5 ms (200 Hz)
         }
         prev_qvel = qvel_now;
         have_prev_qvel = true;
