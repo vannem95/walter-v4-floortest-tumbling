@@ -583,8 +583,8 @@ void OSCNode::timer_callback() {
         
         // We must delay the first flip so it happens AFTER the ramp finishes
         // and the robot is at full tumbling speed.
-        const double z_front_start  = 5.15 + RAMP_DURATION; 
-        const double w_back_start   = 3.8 + RAMP_DURATION;
+        const double z_front_start  = 4.6 + RAMP_DURATION; 
+        const double w_back_start   = 1.6 + RAMP_DURATION;
         
         const bool initial_front_F = true;
         const bool initial_back_F  = true;
@@ -739,8 +739,8 @@ void OSCNode::timer_callback() {
         double torso_shin_kv = 35.0;
 
         // Head shins: stiffer Kp and Kv to punch through the uphill apex load
-        double head_shin_kp  = 140.0; 
-        double head_shin_kv  = 60.0;
+        double head_shin_kp  = 80.0; 
+        double head_shin_kv  = 35.0;
 
         // Shin DDQ Commands
         double tl_ddq_cmd = torso_shin_kp * (shin_pos_tl_target - shin_pos_tl) + torso_shin_kv * (shin_vel_target - shin_vel_tl);
