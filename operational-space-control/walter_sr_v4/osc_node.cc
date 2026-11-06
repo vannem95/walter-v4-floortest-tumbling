@@ -583,8 +583,8 @@ void OSCNode::timer_callback() {
         
         // We must delay the first flip so it happens AFTER the ramp finishes
         // and the robot is at full tumbling speed.
-        const double z_front_start  = 4.6 + RAMP_DURATION; 
-        const double w_back_start   = 1.6 + RAMP_DURATION;
+        const double z_front_start  = 4.6 + 6.0 + RAMP_DURATION; 
+        const double w_back_start   = 1.6 + 1.2 + RAMP_DURATION;
         
         const bool initial_front_F = true;
         const bool initial_back_F  = true;
