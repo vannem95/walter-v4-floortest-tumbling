@@ -1335,7 +1335,7 @@ void OSCNode::update_osc_data() {
     
     // Total non-actuated forces = Bias - Passive
     // This ensures the solver accounts for the 'help' or 'resistance' from joint damping
-    coriolis_matrix -= passive_forces;
+    // coriolis_matrix -= passive_forces;
     // ===============================
 
     Vector<model::nq_size> generalized_positions = Eigen::Map<Vector<model::nq_size>>(mj_data_->qpos);
