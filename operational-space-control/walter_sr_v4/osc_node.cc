@@ -755,6 +755,15 @@ void OSCNode::timer_callback() {
         double hr_hip_z_ddq_cmd = thigh_z_kp * (target_hip_z - hip_z_hr) + thigh_z_kv * (target_hip_z_vel - hip_zv_hr);
 
 
+        // Clamp downward hip Z acceleration to -3.0 m/s^2 (~0.3g) so the QP NEVER unloads Fz to zero!
+        const double MIN_HIP_Z_ACC = -2.5; 
+        const double MAX_HIP_Z_ACC =  10.0;
+
+        tl_hip_z_ddq_cmd = std::clamp(tl_hip_z_ddq_cmd, MIN_HIP_Z_ACC, MAX_HIP_Z_ACC);
+        tr_hip_z_ddq_cmd = std::clamp(tr_hip_z_ddq_cmd, MIN_HIP_Z_ACC, MAX_HIP_Z_ACC);
+        hl_hip_z_ddq_cmd = std::clamp(hl_hip_z_ddq_cmd, MIN_HIP_Z_ACC, MAX_HIP_Z_ACC);
+        hr_hip_z_ddq_cmd = std::clamp(hr_hip_z_ddq_cmd, MIN_HIP_Z_ACC, MAX_HIP_Z_ACC);
+
         // Approximate linear acceleration = rotational acceleration * radius
         // double tl_x_ff = tl_ddq_cmd * L_SHIN;
         // double tr_x_ff = tr_ddq_cmd * L_SHIN;
