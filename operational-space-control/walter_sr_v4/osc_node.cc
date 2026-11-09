@@ -442,10 +442,18 @@ void OSCNode::timer_callback() {
     double global_shin_pos_hr = torso_pitch + local_state.motor_position(6) + local_state.motor_position(7);
     // ==============================================================================
 
+    // double counter;
+    bool front_F;
+    bool back_F;
 
     // Zero time step
     if (last_time_ == 0.0) {
         update_mj_data(local_state); // Pass local state
+
+        // Counter for global shin angle based contact switch
+        // counter = 1; 
+        front_F = true;
+        back_F = true;
 
         // Set initial variables
         hip_z_tl_initial = hip_z_tl;
@@ -574,35 +582,94 @@ void OSCNode::timer_callback() {
         double shin_pos_hl_target = shin_pos_hl_initial + pos_offset;
         double shin_pos_hr_target = shin_pos_hr_initial + pos_offset;
 
-        // ===============================================================
-        // 2. CONTACT SCHEDULING (Tied securely to REAL elapsed time)
-        // ===============================================================
+        // ==============================================================================================================================
+        // CONTACT SCHEDULING (TIMING BASED)
+        // ==============================================================================================================================
         // These timings MUST be linked to elapsed_t, not the position offset
-        const double x_front_period = 4.26; 
-        const double y_back_period  = 4.26;
+        // const double x_front_period = 4.26; 
+        // const double y_back_period  = 4.26;
         
-        // We must delay the first flip so it happens AFTER the ramp finishes
-        // and the robot is at full tumbling speed.
-        const double z_front_start  = 4.6 + 6.0 + RAMP_DURATION; 
-        const double w_back_start   = 1.6 + 1.2 + RAMP_DURATION;
+        // // We must delay the first flip so it happens AFTER the ramp finishes
+        // // and the robot is at full tumbling speed.
+        // const double z_front_start  = 4.6 + 6.0 + RAMP_DURATION; 
+        // const double w_back_start   = 1.6 + 1.2 + RAMP_DURATION;
         
-        const bool initial_front_F = true;
-        const bool initial_back_F  = true;
+        // const bool initial_front_F = true;
+        // const bool initial_back_F  = true;
 
-        // Front/Head Flips
-        bool front_F = initial_front_F;
-        if (elapsed_t >= z_front_start) {
-            int flips = static_cast<int>((elapsed_t - z_front_start) / x_front_period) + 1;
-            if (flips % 2 != 0) front_F = !initial_front_F;
+        // // Front/Head Flips
+        // bool front_F = initial_front_F;
+        // if (elapsed_t >= z_front_start) {
+        //     int flips = static_cast<int>((elapsed_t - z_front_start) / x_front_period) + 1;
+        //     if (flips % 2 != 0) front_F = !initial_front_F;
+        // }
+
+        // // Back/Torso Flips
+        // bool back_F = initial_back_F;
+        // if (elapsed_t >= w_back_start) {
+        //     int flips = static_cast<int>((elapsed_t - w_back_start) / y_back_period) + 1;
+        //     if (flips % 2 != 0) back_F = !initial_back_F;
+        // }
+        
+
+        // ==============================================================================================================================
+        // CONTACT SCHEDULING (SHIN ANGLE BASED)
+        // ==============================================================================================================================
+        
+        // Torso
+        // LOGIC:
+        // if left and right global shin angles greater than 95% --> flip --> n = n + 1
+
+        // if ((global_shin_pos_tl > 0.95*counter*M_PI) && (global_shin_pos_tr > 0.95*counter*M_PI)) {
+        //     back_F = !back_F;
+        //     counter +=1;
+        // }
+
+        // if ((global_shin_pos_hl > 0.95*counter*M_PI) && (global_shin_pos_hr > 0.95*counter*M_PI)) {
+        //     front_F = !front_F;
+        //     counter +=1;
+        // }      
+        
+        // ===========================================================================================================
+        // Gloabl shin angle based switching - V2
+        // ===========================================================================================================
+        // Static counters for kinematic contact switching (initialized once on first run)
+        static int back_counter  = 1;
+        static int front_counter = 1;
+        static bool back_F  = true;
+        static bool front_F = true;
+        static bool counters_initialized = false;
+
+        if (!counters_initialized) {
+            // Find the first integer multiple of M_PI strictly ahead of the starting shin angles
+            double init_back_shin  = 0.5 * (global_shin_pos_tl + global_shin_pos_tr);
+            double init_front_shin = 0.5 * (global_shin_pos_hl + global_shin_pos_hr);
+            back_counter  = static_cast<int>(std::floor(init_back_shin  / M_PI)) + 1;
+            front_counter = static_cast<int>(std::floor(init_front_shin / M_PI)) + 1;
+            counters_initialized = true;
         }
 
-        // Back/Torso Flips
-        bool back_F = initial_back_F;
-        if (elapsed_t >= w_back_start) {
-            int flips = static_cast<int>((elapsed_t - w_back_start) / y_back_period) + 1;
-            if (flips % 2 != 0) back_F = !initial_back_F;
+        // Constant 0.05 * M_PI (~9 deg) lead angle before flat touchdown (NEVER scales with counter!)
+        const double lead_angle = 0.05 * M_PI;
+        double back_threshold   = (back_counter  * M_PI) - lead_angle;
+        double front_threshold  = (front_counter * M_PI) - lead_angle;
+
+        // Flip Back (Torso) mask when BOTH TL and TR pass the touchdown threshold
+        if ((global_shin_pos_tl > back_threshold) && (global_shin_pos_tr > back_threshold)) {
+            back_F = !back_F;
+            back_counter += 1;
+            RCLCPP_INFO(this->get_logger(), "[Contact Switch] BACK flipped to %s at t=%.2fs (cnt=%d)",
+                        back_F ? "FRONT(1,0)" : "REAR(0,1)", elapsed_t, back_counter - 1);
         }
-        
+
+        // Flip Front (Head) mask when BOTH HL and HR pass the touchdown threshold
+        if ((global_shin_pos_hl > front_threshold) && (global_shin_pos_hr > front_threshold)) {
+            front_F = !front_F;
+            front_counter += 1;
+            RCLCPP_INFO(this->get_logger(), "[Contact Switch] FRONT flipped to %s at t=%.2fs (cnt=%d)",
+                        front_F ? "FRONT(1,0)" : "REAR(0,1)", elapsed_t, front_counter - 1);
+        }
+
         // ... (Keep your existing Contact Mask assignment logic here) ...
 
         // 6. Apply to Contact Mask
