@@ -505,7 +505,7 @@ void OSCNode::timer_callback() {
     bool limit_hit = local_safety_override_active;     
     if (!local_safety_override_active) {
         const double THIGH_LIMIT = 1.95;
-        const double MIN_HIP_HEIGHT = 0.11; // 0.13 meters
+        const double MIN_HIP_HEIGHT = 0.09; // 0.13 meters
         const double MAX_MOTOR_VELOCITY = 25.0; // <-- NEW: Max safe velocity (rad/s)        
         
         // 1. Check Hip Heights
