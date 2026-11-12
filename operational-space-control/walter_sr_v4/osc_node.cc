@@ -1395,6 +1395,24 @@ void OSCNode::update_osc_data() {
     mj_fullM(mj_model_, mass_matrix.data(), mj_data_->qM);
     Vector<model::nv_size> coriolis_matrix = Eigen::Map<Vector<model::nv_size>>(mj_data_->qfrc_bias);
 
+    // ======================================
+    // Stiction test - Adding stiction/frictionloss to coriolis
+    
+    // Read joint frictionloss directly from the MuJoCo XML model (mj_model_->dof_frictionloss)
+    // and apply 65% smoothed Coulomb friction compensation into the QP bias vector:
+    const double FRIC_COMP_RATIO = 0.65; // 65% feedforward avoids zero-velocity limit-cycle chatter
+    const double V_EPS           = 0.04; // rad/s smoothing band for tanh
+
+    for (int dof = 6; dof < model::nv_size; ++dof) {
+        double tau_c_xml = mj_model_->dof_frictionloss[dof];
+        double dq        = mj_data_->qvel[dof];
+        coriolis_matrix(dof) += (FRIC_COMP_RATIO * tau_c_xml) * std::tanh(dq / V_EPS);
+    }
+
+    //======================================= 
+    
+    
+    
     // ===============================
     // --- NEW: Add Passive Force Compensation ---
     // Mapping qfrc_passive (Damping/Springs)
