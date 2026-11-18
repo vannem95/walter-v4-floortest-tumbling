@@ -577,7 +577,7 @@ void OSCNode::timer_callback() {
             pos_offset = distance_during_ramp + TARGET_VELOCITY * (elapsed_t - RAMP_DURATION);
         }
 
-        double shin_vel_target = shin_rot_vel;
+        shin_vel_target = shin_rot_vel;
 
         double shin_pos_tl_target = shin_pos_tl_initial + pos_offset;
         double shin_pos_tr_target = shin_pos_tr_initial + pos_offset;
