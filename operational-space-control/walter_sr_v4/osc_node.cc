@@ -396,6 +396,8 @@ void OSCNode::timer_callback() {
     double dt = current_time - last_time_;
     if (dt == 0.0) dt = 0.0001;
     
+    double shin_vel_target = 0.0; 
+
     // initial hip height
     static double hip_z_tl_initial = 0.14;
     static double hip_z_tr_initial = 0.14;
