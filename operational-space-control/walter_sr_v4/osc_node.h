@@ -109,8 +109,8 @@ private:
     void reset_optimization();
     // Now takes the safety status
     void publish_torque_command(bool safety_override_active_local, 
-                                    std::chrono::time_point<std::chrono::high_resolution_clock> state_read_time_local);
-    // Helper functions from the original main
+                                std::chrono::time_point<std::chrono::high_resolution_clock> state_read_time_local,
+                                double shin_vel_target);    // Helper functions from the original main
     
     template <typename T>
     bool contains(const std::vector<T>& vec, const T& value);

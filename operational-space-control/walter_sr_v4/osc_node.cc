@@ -1246,7 +1246,7 @@ void OSCNode::timer_callback() {
 
     last_time_ = current_time;
     // Publish using the determined safety status and the captured timestamp
-    publish_torque_command(local_safety_override_active, local_state_read_time); 
+    publish_torque_command(local_safety_override_active, local_state_read_time, shin_vel_target); 
 
     // ==============================================================================        
     // 3. Publish
@@ -1400,14 +1400,14 @@ void OSCNode::update_osc_data() {
     
     // Read joint frictionloss directly from the MuJoCo XML model (mj_model_->dof_frictionloss)
     // and apply 65% smoothed Coulomb friction compensation into the QP bias vector:
-    const double FRIC_COMP_RATIO = 0.65; // 65% feedforward avoids zero-velocity limit-cycle chatter
-    const double V_EPS           = 0.04; // rad/s smoothing band for tanh
+    // const double FRIC_COMP_RATIO = 0.65; // 65% feedforward avoids zero-velocity limit-cycle chatter
+    // const double V_EPS           = 0.04; // rad/s smoothing band for tanh
 
-    for (int dof = 6; dof < model::nv_size; ++dof) {
-        double tau_c_xml = mj_model_->dof_frictionloss[dof];
-        double dq        = mj_data_->qvel[dof];
-        coriolis_matrix(dof) += (FRIC_COMP_RATIO * tau_c_xml) * std::tanh(dq / V_EPS);
-    }
+    // for (int dof = 6; dof < model::nv_size; ++dof) {
+    //     double tau_c_xml = mj_model_->dof_frictionloss[dof];
+    //     double dq        = mj_data_->qvel[dof];
+    //     coriolis_matrix(dof) += (FRIC_COMP_RATIO * tau_c_xml) * std::tanh(dq / V_EPS);
+    // }
 
     //======================================= 
     
@@ -1602,7 +1602,8 @@ void OSCNode::reset_optimization() {
 // ===============================================================================================================
 
 void OSCNode::publish_torque_command(bool safety_override_active_local, 
-                                     std::chrono::time_point<std::chrono::high_resolution_clock> state_read_time_local) 
+                                     std::chrono::time_point<std::chrono::high_resolution_clock> state_read_time_local,
+                                     double shin_vel_target) 
 {
     // --- Constants ---
     const std::set<std::string> reversed_joints_ = {
@@ -1662,6 +1663,39 @@ void OSCNode::publish_torque_command(bool safety_override_active_local,
 
         for (size_t i = 0; i < model::nu_size; ++i) {
             double final_torque = osc_torque(i);
+
+
+
+
+
+            // =====================================================================
+            // KNEE STICTION BREAKAWAY & RUNAWAY BRAKING GUARD
+            // Knee motor indices in nu_size (0..7): 1 (TL), 3 (TR), 5 (HL), 7 (HR)
+            // =====================================================================
+            if (i == 1 || i == 3 || i == 5 || i == 7) {
+                int knee_dof = 6 + i; 
+                double knee_vel = mj_data_->qvel[knee_dof];
+                
+                // 1. Stiction Breakaway: Add +1.2 Nm when climbing normally
+                const double KNEE_STICTION_FF = 1.20; // Nm (~65% of 1.9 Nm measured belt drag)
+                
+                if (knee_vel < (shin_vel_target + 0.3)) {
+                    final_torque += KNEE_STICTION_FF * std::tanh(shin_vel_target / 0.04);
+                }
+
+                // 2. Runaway Braking Guard: If knee overspeeds (> shin_vel_target + 1.5 rad/s), 
+                // kill positive motor torque so it cannot accelerate a slipping shin!
+                if (knee_vel > (shin_vel_target + 1.5)) {
+                    final_torque = std::min(final_torque, 0.0);
+                }
+            }
+            // =====================================================================
+
+
+
+
+
+
             
             if (reversed_joints_.count(MOTOR_NAMES[i])) {
                 final_torque *= -1.0;
